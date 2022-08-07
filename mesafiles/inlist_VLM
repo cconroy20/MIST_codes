@@ -1,6 +1,6 @@
-!high-mass stars
+!low- and intermediate-mass stars
 
-&star_job
+      &star_job
       show_log_description_at_start = .false.
 
       !EOS
@@ -9,7 +9,7 @@
 
       !PMS
       create_pre_main_sequence_model = .true.
-      pre_ms_T_c = 8d5
+      pre_ms_T_c = 4d5
       pre_ms_relax_num_steps = 10
 
       !MISC. SETUP
@@ -26,7 +26,6 @@
       set_uniform_initial_xa_from_file = .true.
 
       show_kap_info = .true.
-      !opacities with AGSS09 abundances
       kappa_file_prefix = 'agss09_<<AFE>>'
       kappa_lowT_prefix = 'lowT_fa05_agss09_<<AFE>>'
       kappa_CO_prefix = 'agss09_<<AFE>>_co'
@@ -74,16 +73,17 @@
       star_history_dbl_format = '(1pes32.16e3, 1x)'
       star_history_int_format = '(i32, 1x)'
       star_history_txt_format = '(a32, 1x)'
-
       star_history_name = '<<MASS>>M.data'
+
       write_profiles_flag = .false.
 
       !WHEN TO STOP
-      gamma_center_limit = 1.0d3
+      xa_central_lower_limit_species(1) = 'h1'
+      xa_central_lower_limit(1) = 0.09d0
+
 
       !PHYSICS
-  !    which_atm_option = 'tau_10_tables'
-      which_atm_option = 'simple_photosphere'
+      which_atm_option = 'tau_10_tables'
       mixing_length_alpha = 1.95d0
       mlt_option = 'Henyey'
       mlt_use_rotation_correction = .false.
@@ -113,14 +113,21 @@
       overshoot_f_below_nonburn_shell = 0.016d0
       overshoot_f_above_burn_h_shell  = 0.016d0
       overshoot_f_below_burn_h_shell  = 0.016d0
+      overshoot_f_above_burn_he_shell = 0.016d0
+      overshoot_f_below_burn_he_shell = 0.016d0
       overshoot_f_above_burn_z_shell  = 0.016d0
       overshoot_f_below_burn_z_shell  = 0.016d0
       overshoot_f0_above_nonburn_shell = 0.008d0
       overshoot_f0_below_nonburn_shell = 0.008d0
       overshoot_f0_above_burn_h_shell  = 0.008d0
       overshoot_f0_below_burn_h_shell  = 0.008d0
+      overshoot_f0_above_burn_he_shell = 0.008d0
+      overshoot_f0_below_burn_he_shell = 0.008d0
       overshoot_f0_below_burn_z_shell  = 0.008d0
       overshoot_f0_above_burn_z_shell  = 0.008d0
+
+      !enhance `overshoot_f_below_nonburn_shell` by this factor during 3DUP in TPAGB
+      overshoot_below_noburn_shell_factor = 1.0d1
 
       !CO enhanced opacities
       use_Type2_opacities = .true.
@@ -160,21 +167,25 @@
 
 
       !MASS LOSS
-      cool_wind_full_on_T = 1.0d0
-      hot_wind_full_on_T = 2.0d0
+      cool_wind_full_on_T = 1.15d4
+      hot_wind_full_on_T = 1.25d4
       hot_wind_scheme = 'Dutch'
-      cool_wind_RGB_scheme ='Dutch'
-      cool_wind_AGB_scheme = 'Dutch'
-      Dutch_scaling_factor = 1.0d0
-      !max_wind = 1.0d-3
+      cool_wind_RGB_scheme ='Reimers'
+      cool_wind_AGB_scheme = 'Blocker'
+      Reimers_scaling_factor = 0.1d0
+      Blocker_scaling_factor = 0.2d0
+      RGB_to_AGB_wind_switch = 1d-2
+      max_wind = 1.0d-3
 
       !DIFFUSION
       do_element_diffusion = .true.
       diffusion_dt_limit = 3.15d9 !seconds
       diffusion_min_T_at_surface = 1.0d3
       diffusion_min_dq_at_surface = 1.0d-3
-      diffusion_gamma_full_on = 228.0d0
-      diffusion_gamma_full_off = 232.0d0
+      turbulent_diffusion_D0 = 1
+      turbulent_diffusion_rho_max = 1d-1
+      diffusion_gamma_full_on = 228
+      diffusion_gamma_full_off = 232
       diffusion_use_full_net = .true.
       do_Ne22_sedimentation_heating = .true.
 
@@ -183,13 +194,10 @@
       c_core_boundary_he4_fraction = 1d-4
       o_core_boundary_c12_fraction = 1d-4
 
-
-
 ! mass resolution
-       max_dq = 0.001      ! minimum number of cells = 1/max_dq
+       max_dq = 0.005      ! minimum number of cells = 1/max_dq
        mesh_delta_coeff = 1.0
        max_allowed_nz = 400000
-       varcontrol_target = 1.0d-3
 
 
 ! time step resolution on temperature and density changes
@@ -210,6 +218,7 @@
 ! time step resolution on the he luminosity and changes in the hr diagram
 !      delta_HR_limit = 0.0025d0
       delta_lgL_He_limit = 0.1
+
 
 ! time step resolution on fuel depletion
 

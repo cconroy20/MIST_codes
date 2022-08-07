@@ -7,6 +7,7 @@ Args:
     runname: the name of the grid
     startype: the mass range of the models
     afe: the [a/Fe] value of the grid as str
+    feh: the [Fe/H] value of the grid as str
     zbase: the Zbase corresponding to [Fe/H] and [a/Fe] as float
     rot: initial v/vcrit 
     net: name of the nuclear network
@@ -28,42 +29,41 @@ Acknowledgment:
 import sys
 import numpy as np
     
-def make_inlist_inputs(runname, startype, afe, zbase, rot, net):
+def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net):
     
     #Array of all masses
     massgrid = lambda i,f,step: np.linspace(i,f,round(((f-i)/step))+1.0)
 
-    bigmassgrid = np.unique(np.hstack((massgrid(0.1,0.3,0.05),\
-                                        massgrid(0.3,0.4,0.01), massgrid(0.4,0.9,0.05),\
-                                        massgrid(0.92,2.8,0.02), massgrid(3.0,8.0,0.2),\
-                                        massgrid(9,20,1), massgrid(20,40,2),\
-                                        massgrid(40,150,5),massgrid(150, 300, 25))))
+
+# MIST2 - low and intermediate
+#    bigmassgrid = np.unique(np.hstack((massgrid(10.0,20.0,1.0), massgrid(20,100,5), massgrid(100,300,25) )))
+    bigmassgrid = massgrid(70.,70.,2.)
+
+# MIST2 - high
+#    bigmassgrid = np.unique(np.hstack((massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,25))))
+
+# MIST2 - full
+#    bigmassgrid = np.unique(np.hstack((massgrid(0.5,2.0,0.05), massgrid(2.1,4.0,0.1), \
+#                                       massgrid(4.25,6.0,0.25), massgrid(6.5,9.0,0.5), \
+#                                       massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,25))))
+
+# for testing
+    #bigmassgrid = np.unique(np.hstack((massgrid(1,10,0.2))))
+    #bigmassgrid = np.unique(np.hstack((massgrid(3.0,4.0,0.1), massgrid(4.0,6.0,0.25), massgrid(6.5,9.0,0.5) ))) #, massgrid(100,300,25))))
+
+# MIST1
+#    bigmassgrid = np.unique(np.hstack((massgrid(0.1,0.3,0.05),massgrid(0.3,0.4,0.01),massgrid(0.4,2.0,0.05),\
+#					massgrid(2.0,4.0,0.1),massgrid(4.0,6.0,0.25),\
+#                                        massgrid(6.0,9.0,0.5),massgrid(9,20,1), massgrid(20,40,5),\
+#                                        massgrid(40,150,10),massgrid(150, 300, 25))))
 
     #Choose the correct mass range and boundary conditions                                   
     if (startype == 'VeryLow'):
-        massindex = np.where(bigmassgrid < 0.30)
-        bctype = 'tau_100_tables'
-        bclabel = ''
-    elif (startype == 'LowDiffBC'):
-        massindex = np.where((bigmassgrid >= 0.30) & (bigmassgrid < 0.6)) 
-        bctype1 = 'tau_100_tables'
-        bclabel1 = '_tau100'
-        bctype2 = 'photosphere_tables'
-        bclabel2 = '_PT'
+        massindex = np.where(bigmassgrid <= 0.4)
     elif (startype == 'Intermediate'):
-        massindex = np.where((bigmassgrid >= 0.6) & (bigmassgrid < 10.0))
-        bctype = 'photosphere_tables'
-        bclabel = ''
-    elif (startype == 'HighDiffBC'):
-        massindex = np.where((bigmassgrid >= 10.0) & (bigmassgrid < 16.0)) 
-        bctype1 = 'photosphere_tables'
-        bclabel1 = '_PT'
-        bctype2 = 'simple_photosphere'
-        bclabel2 = '_SP'
+        massindex = np.where((bigmassgrid < 8.0) & (bigmassgrid > 0.4))
     elif (startype == 'VeryHigh'):
-        massindex = np.where(bigmassgrid >= 16.0)
-        bctype = 'simple_photosphere'
-        bclabel = ''
+        massindex = np.where(bigmassgrid >= 10.0)
     else:
         print 'Invalid choice.'
         sys.exit(0)
@@ -72,16 +72,11 @@ def make_inlist_inputs(runname, startype, afe, zbase, rot, net):
     mapfunc = lambda var: np.str(int(var)) if var == int(var) else np.str(var)
     masslist = map(mapfunc, bigmassgrid[massindex])
         
-    #Create BC lists    
-    if ('Diff' in startype):
-        bctablelist = list([bctype1]*np.size(massindex))+list([bctype2]*np.size(massindex))
-        bclabellist = list([bclabel1]*np.size(massindex))+list([bclabel2]*np.size(massindex))
-    else:
-        bctablelist = list([bctype]*np.size(massindex))
-        bclabellist = list([bclabel]*np.size(massindex))
-    
     #Create [a/Fe] lists
     afelist = list([afe]*np.size(massindex))
+
+    #create [Fe/H] lists
+    fehlist = list([feh]*np.size(massindex))
 
     #Create Zbase list
     zbaselist = list([zbase]*np.size(massindex))
@@ -95,24 +90,11 @@ def make_inlist_inputs(runname, startype, afe, zbase, rot, net):
     #Make list of [replacement string, values]
     replist = [\
             ["<<MASS>>", masslist],\
-            ["<<BC_LABEL>>", bclabellist],\
-            ["<<BC_TABLE>>", bctablelist],\
             ["<<AFE>>", afelist],\
+            ["<<FEH>>", fehlist],\
             ["<<ZBASE>>", zbaselist],\
             ["<<ROT>>", rotlist],\
             ["<<NET>>", netlist],\
         ]
     
-    #Special case for LowDiffBC
-    if ('Diff' in startype):
-        replist = [\
-                ["<<MASS>>", masslist*2],\
-                ["<<BC_LABEL>>", bclabellist],\
-                ["<<BC_TABLE>>", bctablelist],\
-                ["<<AFE>>", afelist*2],\
-                ["<<ZBASE>>", zbaselist*2],\
-                ["<<ROT>>", rotlist*2],\
-                ["<<NET>>", netlist*2],\
-            ]
-
     return replist

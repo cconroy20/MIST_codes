@@ -8,14 +8,15 @@ Args:
     runname: the name of the grid
     FeH: metallicity
     aFe: alpha-enhancement
+    rotation
+    net_name
 
 Keywords:
     vvcrit: rotation
-    net_name: name of the nuclear network. Input to the abundance code.
     
 Example:
-    To run a [Fe/H] = 0, [a/Fe] = 0 grid called MIST_v0.1
-    >>> ./submit_jobs MIST_v0.1 0.0 0.0
+    To run a [Fe/H] = 0, [a/Fe] = 0 grid called MIST_v0.1 with v/vcrit=0.4 and using basic.net
+    >>> ./submit_jobs MIST_v0.1 0.0 0.0 0.4 basic.net
 
 """
 
@@ -27,28 +28,66 @@ from scripts import make_slurm_sh
 from scripts import make_inlist_inputs
 from scripts import make_replacements
 
+def name(feh,afe):
+    def m_or_p(x):
+        if x >= 0:
+            return 'p'
+        else:
+            return 'm'
+    ifeh=int(round(1000*feh)/10)
+    iafe=int(round(1000*afe)/100)
+    return 'feh_'+m_or_p(ifeh)+str(abs(ifeh)).zfill(3)+'_afe_'+m_or_p(iafe)+str(abs(iafe))
+
+
+from numpy import float
+
 if __name__ == "__main__":
 
+    #net_name='mesa_49.net'
+    #net_name = 'basic_plus_fe56_ni58.net'
+    #net_name = 'pp_cno_extras_o18_ne22.net'
+    #net_name = 'MIST2_36.net'
+    net_name = 'MIST2_49.net'
+    vvcrit = 0.4
+
     #Digest the inputs
-    if len(sys.argv) == 4:
-        runname = sys.argv[1]
-        FeH = float(sys.argv[2])
-        aFe = float(sys.argv[3])
-        vvcrit = 0.4
-        net_name = 'mesa_49.net'
-    elif len(sys.argv) < 4:
+    if len(sys.argv) < 3:
         print "Usage: ./submit_jobs name_of_grid FeH aFe vvcrit* net_name*"
         print "* vvcrit and net_name are optional. They default to 0.4 and mesa_49.net."
         sys.exit(0)
-    else:
-        runname = sys.argv[1]
-        FeH = float(sys.argv[2])
-        aFe = float(sys.argv[3])
-        vvcrit = float(sys.argv[4])
-        net_name = sys.argv[5]
+    elif len(sys.argv) == 3:
+        #runname = sys.argv[1]
+        FeH = float(sys.argv[1])
+        aFe = float(sys.argv[2])
+    elif len(sys.argv) == 4:
+        #runname = sys.argv[1]
+        FeH = float(sys.argv[1])
+        aFe = float(sys.argv[2])
+        vvcrit = float(sys.argv[3])
+    elif len(sys.argv) > 4:
+        #runname = sys.argv[1]
+        FeH = float(sys.argv[1])
+        aFe = float(sys.argv[2])
+        vvcrit = float(sys.argv[3])
+        net_name = "'" + sys.argv[4] + "'"
+        if len(sys.argv)==6:
+            suffix = "_" + sys.argv[5]
+        else:
+            suffix = ""
+
+    runname = name(FeH,aFe) + suffix
+
+    print('grid name is: {0}'.format(runname))
+    print('[Fe/H] = {0}'.format(FeH))
+    print('[a/Fe] = {0}'.format(aFe))
+    print('v/vcrit = {0}'.format(vvcrit))
+    print('network = {0}'.format(net_name))
+    #sys.exit(0)
 
     dirname = os.path.join(os.environ['MIST_GRID_DIR'], runname)    
-    
+   
+    print dirname
+ 
     #Create a working directory
     try:
         os.mkdir(dirname)
@@ -58,8 +97,9 @@ if __name__ == "__main__":
     
     #Generate inlists using template inlist files
     tempstor_inlist_dir = os.path.join(os.environ['MESAWORK_DIR'], 'inlists/inlists_'+'_'.join(runname.split('/')))
-    new_inlist_name = '<<MASS>>M<<BC_LABEL>>.inlist'
+    new_inlist_name = '<<MASS>>M.inlist'
     path_to_inlist_lowinter = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_lowinter')
+    path_to_inlist_VLM = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_VLM')
     path_to_inlist_high = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_high')
     
     
@@ -72,28 +112,31 @@ if __name__ == "__main__":
         afe_fmt = 'afe'+str(aFe)
     else:
         afe_fmt = 'afe+'+str(aFe)
+    
+    new_name = os.path.join(os.environ['MESA_DIR'], 'data/atm_data/') + 'table10_summary.txt'
+    #old_name = os.path.join(os.environ['MESA_DIR'], 'data/atm_data/') +'table10_summary_'+afe_fmt+'_mdwarf.txt'
+    old_name = os.path.join(os.environ['MESA_DIR'], 'data/atm_data/') +'table10_summary_'+afe_fmt+'.txt'
+
+    print('cp ' + old_name + ' ' + new_name)
+    os.system('cp ' + old_name + ' ' + new_name)
         
     #Run Aaron's code to get the abundances
     shutil.copy(os.path.join(os.environ["XA_CALC_DIR"],"initial_xa_calculator"),os.environ['MIST_CODE_DIR'])
     os.system(os.path.join(os.environ['MIST_CODE_DIR'],"initial_xa_calculator") +\
-        " " +  net_name + " " + str(FeH) + " " +str(aFe))
+        " " +  net_name + " " + str(FeH) + " " +str(aFe) + " 1.3245")
         
     #Zbase needs to be set in MESA for Type II opacity tables. Get this from a file produced by Aaron's code
     with open('input_XYZ') as f:
-        Xval = float(f.readline())
-        Yval = float(f.readline())
-        zbase = float(f.readline())
+        Xval = float(f.readline().replace('D','E'))
+        Yval = float(f.readline().replace('D','E'))
+        zbase = float(f.readline().replace('D','E'))
 
     #Make the substitutions in the template inlists
-    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryLow', afe_fmt, zbase, vvcrit, net_name),\
-        new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_lowinter, clear_direc=True)
-    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'LowDiffBC', afe_fmt, zbase, vvcrit, net_name),\
+    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryLow', FeH, afe_fmt, zbase, vvcrit, net_name),\
+        new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_VLM)
+    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'Intermediate', FeH, afe_fmt, zbase, vvcrit, net_name),\
         new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_lowinter)
-    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'Intermediate', afe_fmt, zbase, vvcrit, net_name),\
-        new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_lowinter)
-    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'HighDiffBC', afe_fmt, zbase, vvcrit, net_name),\
-        new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_high)
-    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryHigh', afe_fmt, zbase, vvcrit, net_name),\
+    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryHigh', FeH, afe_fmt, zbase, vvcrit, net_name),\
         new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_high)
         
     inlist_list = os.listdir(tempstor_inlist_dir)
@@ -112,12 +155,16 @@ if __name__ == "__main__":
         #Populate each directory with appropriate inlists and rename as inlist_project
         shutil.copy(os.path.join(tempstor_inlist_dir,inlistname), os.path.join(path_to_onemassdir, 'inlist_project'))
         
-        #Populate each directory with the most recent my_history_columns.list and run_star_extras.f
+        #Populate each directory with the most recent my_history columns and profile columns
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/my_history_columns.list'),\
                 os.path.join(path_to_onemassdir, 'my_history_columns.list'))
-        shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/run_star_extras.f'),\
-                os.path.join(path_to_onemassdir, 'src/run_star_extras.f'))
-        
+        shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/my_profile_columns.list'),\
+                os.path.join(path_to_onemassdir, 'my_profile_columns.list'))
+        shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/run_star_extras.f90'),\
+                os.path.join(path_to_onemassdir, 'src/run_star_extras.f90'))
+	#shutil.copy(os.path.join(os.environ['MESA_DIR'], 'star/work/star'),\
+	#	os.path.join(path_to_onemassdir, 'star'))        
+
         #Populate each directory with the input abundance file named input_initial_xa.data and input_XYZ
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'input_initial_xa.data'), path_to_onemassdir)
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'input_XYZ'), path_to_onemassdir)

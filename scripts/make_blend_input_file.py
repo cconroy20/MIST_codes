@@ -24,7 +24,8 @@ import numpy as np
 def make_blend_input_file(runname, file1, file2):
 
     #Convert MIST_vXX_feh_XXX_afe_XXX back to MIST_vXX/feh_XXX_afe_XXX
-    runname_original = runname.split('_feh')[0]+'/feh'+runname.split('feh')[1]
+    #runname_original = runname.split('_feh')[0]+'/feh'+runname.split('feh')[1]
+    runname_original = runname
 
     #Generate the name of the input file for the blending code
     eeps_dir = os.path.join(os.path.join(os.environ['MIST_GRID_DIR'], runname_original), "eeps")

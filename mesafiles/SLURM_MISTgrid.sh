@@ -1,16 +1,17 @@
 #!/bin/bash
 
-#SBATCH -n 8
-#SBATCH -N 1
+#SBATCH --job-name="<<RUNNAME>>"
+#SBATCH --partition=conroy_priority,itc_cluster
+#SBATCH --constraint="intel"
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=12
 #SBATCH -t <<RUNTIME>>
-#SBATCH --mem 8000
-#SBATCH -p conroy
+#SBATCH --mem 12000
 #SBATCH -o <<RUNNAME>>.o
 #SBATCH -e <<RUNNAME>>.e
 
-export OMP_NUM_THREADS=8
+export OMP_NUM_THREADS=12
 cd <<DIRNAME>>
-./clean
-./mk
 echo "SLURM JOB ID: $SLURM_JOB_ID"
-./rn
+./mk
+./star inlist_project
