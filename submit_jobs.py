@@ -97,7 +97,7 @@ if __name__ == "__main__":
     
     #Generate inlists using template inlist files
     tempstor_inlist_dir = os.path.join(os.environ['MESAWORK_DIR'], 'inlists/inlists_'+'_'.join(runname.split('/')))
-    new_inlist_name = '<<MASS>>M.inlist'
+#    new_inlist_name = '<<MASS>>M.inlist'
     path_to_inlist_lowinter = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_lowinter')
     path_to_inlist_VLM = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_VLM')
     path_to_inlist_high = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_high')
@@ -112,7 +112,14 @@ if __name__ == "__main__":
         afe_fmt = 'afe'+str(aFe)
     else:
         afe_fmt = 'afe+'+str(aFe)
-    
+ 
+    if FeH < 0:
+        feh_fmt = "feh{0:5.2f}".format(FeH)
+    else:
+        feh_fmt = "feh+{0:4.2f}".format(FeH)
+
+    new_inlist_name = '<<MASS>>M_'+feh_fmt+'_'+afe_fmt+'.inlist'
+   
     new_name = os.path.join(os.environ['MESA_DIR'], 'data/atm_data/') + 'table10_summary.txt'
     #old_name = os.path.join(os.environ['MESA_DIR'], 'data/atm_data/') +'table10_summary_'+afe_fmt+'_mdwarf.txt'
     old_name = os.path.join(os.environ['MESA_DIR'], 'data/atm_data/') +'table10_summary_'+afe_fmt+'.txt'
@@ -158,8 +165,8 @@ if __name__ == "__main__":
         #Populate each directory with the most recent my_history columns and profile columns
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/my_history_columns.list'),\
                 os.path.join(path_to_onemassdir, 'my_history_columns.list'))
-        shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/my_profile_columns.list'),\
-                os.path.join(path_to_onemassdir, 'my_profile_columns.list'))
+        #shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/my_profile_columns.list'),\
+        #        os.path.join(path_to_onemassdir, 'my_profile_columns.list'))
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/run_star_extras.f90'),\
                 os.path.join(path_to_onemassdir, 'src/run_star_extras.f90'))
 	#shutil.copy(os.path.join(os.environ['MESA_DIR'], 'star/work/star'),\
@@ -170,7 +177,7 @@ if __name__ == "__main__":
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'input_XYZ'), path_to_onemassdir)
 
         #Populate each directory with the opacity configuration file
-        shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/kap_config_file.txt'), path_to_onemassdir)
+        #shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/kap_config_file.txt'), path_to_onemassdir)
 
         #Create and move the SLURM file to the correct directory
         runbasefile = os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/SLURM_MISTgrid.sh')

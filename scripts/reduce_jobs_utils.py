@@ -35,10 +35,10 @@ def gen_summary(rawdirname):
         status = ''
 
         #Extract the mass of the model
-        if 'M_dir' in file:
-            mass = file.split("/")[-2].rstrip('M_dir/')
-        else:
-            mass = file.split("/")[-2].split('M_')[0] + '_' + file.split("/")[-2].split('M_')[1].rstrip('_dir')
+ #       if 'M_dir' in file:
+        mass = file.split("/")[-2].rstrip('M_dir/')
+ #       else:
+ #           mass = file.split("/")[-2].split('M_')[0] + '_' + file.split("/")[-2].split('M_')[1].rstrip('_dir')
 
         with open(file, 'r') as errfile:
             errcontent = errfile.readlines()
@@ -134,13 +134,13 @@ def sort_histfiles(rawdirname):
     #Trim repeated model numbers, then rename & copy the history files over
     for histfile in listofhist:
         print 'processing', histfile
-        if 'M_history.data' in histfile:
-            unformat_mass_string = histfile.split('LOGS/')[1].split('M_history.data')[0]
+        if 'M.data' in histfile:
+            unformat_mass_string = histfile.split('LOGS/')[1].split('M.data')[0]
             newhistfilename = histfile.split('LOGS')[0]+'LOGS/'+reformat_massname.reformat_massname(unformat_mass_string)+'M.track'
-        else:
-            unformat_mass_string = histfile.split('LOGS/')[1].split('_history.data')[0].split('M_')[0]
-            bc_name = histfile.split('LOGS/')[1].split('M_')[1].split('_history.data')[0]
-            newhistfilename = histfile.split('LOGS')[0]+'LOGS/'+reformat_massname.reformat_massname(unformat_mass_string)+'M_' + bc_name + '.track'
+       # else:
+       #     unformat_mass_string = histfile.split('LOGS/')[1].split('.data')[0].split('M_')[0]
+       #     bc_name = histfile.split('LOGS/')[1].split('M')[1].split('.data')[0]
+       #     newhistfilename = histfile.split('LOGS')[0]+'LOGS/'+reformat_massname.reformat_massname(unformat_mass_string)+'M_' + bc_name + '.track'
         os.system("cp " + histfile + " " + newhistfilename)
         mesa_hist_trim.trim_file(newhistfilename)
         os.system("mv " + newhistfilename + " " + histfiles_dirname)

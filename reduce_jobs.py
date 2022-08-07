@@ -91,6 +91,7 @@ if __name__ == "__main__":
     print "************************************************************"
     print "**********************MAKE ISOCHRONES***********************"
     print "************************************************************"
-    make_eeps_isos.make_eeps_isos(runname, basic=False)
-    if dobotheeps:
-        make_eeps_isos.make_eeps_isos(runname, basic=True)
+    make_eeps_isos.make_eeps_isos(runname, basic=False, fsps=True)
+#    if dobotheeps:
+#        make_eeps_isos.make_eeps_isos(runname, basic=True)
+

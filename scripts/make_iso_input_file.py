@@ -55,7 +55,7 @@ def make_iso_input_file(runname, mode, basic, incomplete=[]):
         tracks_list = sorted([x.split('.eep')[0] for x in initial_tracks_list])
         max_good_mass = float(tracks_list[-1].split('/')[-1].split('M')[0])/100.0
         min_good_mass = float(tracks_list[0].split('/')[-1].split('M')[0])/100.0
-        
+
     #Header and footer in the file
     if basic == True:
         mhc_file = "my_history_columns_basic.list"
@@ -87,7 +87,7 @@ def make_iso_input_file(runname, mode, basic, incomplete=[]):
             
     fmt_abun_info = "{:>10.4f}".format(Yval)+"{:>12.5e}".format(Zval)+"{:>7.2f}".format(fehval)+\
         "{:>12.2f}".format(afeval)+"{:>9}".format(vvcrit.split('vvcrit')[-1])+"\n"
-    header = ["#version string, max 8 characters\n", "1.0\n", "#initial Y, initial Z, [Fe/H], [alpha/Fe], v/vcrit\n",\
+    header = ["#version string, max 8 characters\n", "2.2\n", "#initial Y, initial Z, [Fe/H], [alpha/Fe], v/vcrit\n",\
         fmt_abun_info, "#data directories: 1) history files, 2) eeps, 3) isochrones\n", tracks_dir+"\n", eeps_dir+"\n", iso_dir+"\n", \
         "# read history_columns\n", os.path.join(os.environ['ISO_DIR'], mhc_file)+"\n", "# specify tracks\n", str(len(tracks_list))+"\n"]
     footer = ["#specify isochrones\n", iso_file, "min_max\n", "log10\n", "107\n", "5.0\n", "10.3\n", "single\n"]
