@@ -1,6 +1,6 @@
 # MIST_codes
 Routines to run and process a grid of MIST models on the Odyssey computing cluster at Harvard.
-
+  
 ## Prerequisites
 ### Software
 * a customized version of MESA v11701 : http://mesa.sourceforge.net/ (http://waps.cfa.harvard.edu/MIST/data/tarballs_v1.0/MESA_files.tar.gz)
