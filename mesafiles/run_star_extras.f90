@@ -72,7 +72,7 @@ contains
     type (star_info), pointer :: s
     integer :: j, cid
     real(dp) :: frac, vct30, vct100
-    character(len=256) :: photosphere_summary, tau100_summary
+    character(len=256) :: tau10_summary
     ierr = 0
     call star_ptr(id, s, ierr)
     if (ierr /= 0) return
@@ -119,6 +119,11 @@ contains
     !now set f_ov_below_nonburn from [Fe/H] at extras_cpar(4)
     s% overshoot_f_below_nonburn_shell = f_ov_below_nonburn(s% job% extras_rpar(4))
     s% overshoot_f0_below_nonburn_shell = 0.5d0 * s% overshoot_f_below_nonburn_shell
+
+
+    !set the correct summary file for the BC tables depending on [a/Fe]        
+    tau10_summary = 'table10_summary_' // trim(s% job% extras_cpar(1)) // '.txt'
+    call table_atm_init(tau10_summary, ierr)
 
   end function extras_startup
 
@@ -466,6 +471,131 @@ contains
     end if
 
   end function extras_finish_step
+
+
+  ! borrowed directly from atm/private/table_atm.f90;
+  ! modified to deallocate allocated arrays before allocating them again with new dimensions
+  subroutine table_atm_init(tau10_summary, ierr)
+    implicit none
+    character(len=256) :: tau10_summary
+    integer, intent(out) :: ierr
+    type(Atm_info), pointer :: ai
+    integer :: nZ, ng, nT, i, j, iounit
+    integer, pointer :: ibound(:,:), tmp_version(:)
+    character(len=256) :: filename
+
+    ierr = 0
+    if (ierr /= 0) return
+
+    ai => ai_10
+
+    call load_table_summary(atm_tau_10_tables, tau10_summary, ai, ierr)
+    if (ierr /= 0) return
+
+    print *, 'loaded ', trim(tau10_summary)
+
+    table_atm_is_initialized = .true.
+
+  contains
+
+    subroutine load_table_summary(which_atm_option, fname, ai, ierr)
+      use const_def, only: mesa_data_dir
+      use crlibm_lib, only: str_to_vector
+      integer, intent(in) :: which_atm_option
+      character(len=*), intent(in) :: fname
+      type (Atm_Info), pointer :: ai
+      integer, intent(out) :: ierr
+
+      integer :: nvec
+      character (len=500) :: buf
+      real(dp), target :: vec_ary(20)
+      real(dp), pointer :: vec(:)
+
+      vec => vec_ary
+
+      filename = trim(mesa_data_dir)//'/atm_data/' // trim(fname)
+
+      write(*,*) trim(filename)
+
+      open(iounit,file=trim(filename),action='read',status='old',iostat=ierr)
+      if (ierr/= 0) then
+         write(*,*) 'table_atm_init: missing atm data'
+         write(*,*) trim(filename)
+         write(*,*)
+         write(*,*)
+         write(*,*)
+         write(*,*)
+         write(*,*)
+         write(*,*) 'FATAL ERROR: missing or bad atm data.'
+         call mesa_error(__FILE__,__LINE__)
+      endif
+
+      !read first line and (nZ, nT, ng)
+      read(iounit,*)            !first line is text, skip it
+      read(iounit,*) nZ, nT, ng
+
+      ai% nZ = nZ
+      ai% nT = nT
+      ai% ng = ng
+      ai% which_atm_option = which_atm_option
+
+      deallocate(ai% Teff_array, ai% logg_array, ai% Teff_bound, ai% logZ, ai% alphaFe, &
+           ai% Pgas_interp1, ai% T_interp1, ai% have_atm_table, ai% atm_mix, ai% table_atm_files)
+
+      allocate( &
+           ai% Teff_array(nT), ai% logg_array(ng), ai% Teff_bound(ng), &
+           ai% logZ(nZ), ai% alphaFe(nZ), &
+           ai% Pgas_interp1(4*ng*nT*nZ), ai% T_interp1(4*ng*nT*nZ), &
+           ai% have_atm_table(nZ), ai% atm_mix(nZ), ai% table_atm_files(nZ))
+
+      ai% Pgas_interp(1:4,1:ng,1:nT,1:nZ) => ai% Pgas_interp1(1:4*ng*nT*nZ)
+      ai% T_interp(1:4,1:ng,1:nT,1:nZ) => ai% T_interp1(1:4*ng*nT*nZ)
+
+      allocate(ibound(ng,nZ), tmp_version(nZ))
+
+      ai% have_atm_table(:) = .false.
+
+      !read filenames and headers
+      read(iounit,*)            !text
+      do i=1,nZ
+         read(iounit,'(a)') ai% table_atm_files(i)
+         read(iounit,'(14x,i4)') tmp_version(i)
+         read(iounit,1) ai% logZ(i), ai% alphaFe(i), ai% atm_mix(i), ibound(1:ng,i)
+         ibound(1:ng,i) = ibound(1,i)
+      enddo
+
+      !read Teff_array
+      read(iounit,*)            !text
+      read(iounit,2) ai% Teff_array(:)
+
+      !do i = 1,ai% nT
+      !   ai% Teff_array(i) = log_cr(ai% Teff_array(i))
+      !enddo
+
+      !read logg_array
+      read(iounit,*)            !text
+      read(iounit,3) ai% logg_array(:)
+
+      close(iounit)
+
+1     format(13x,f5.2,8x,f4.1,1x,a8,1x,15x,99i4)
+2     format(13f7.0)
+3     format(13f7.2)
+
+      !determine table boundaries
+      do i=1,ng           ! -- for each logg, smallest Teff at which Pgas->0
+         ai% Teff_bound(i) = ai% Teff_array(ibound(i,1))
+         do j=2,nZ
+            ai% Teff_bound(i) = min( ai% Teff_bound(i) , ai% Teff_array(ibound(i,j)) )
+         enddo
+      enddo
+
+      deallocate(ibound, tmp_version)
+
+    end subroutine load_table_summary
+
+  end subroutine table_atm_init
+
 
 
   subroutine extras_after_evolve(id, id_extra, ierr)

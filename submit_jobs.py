@@ -43,10 +43,6 @@ from numpy import float
 
 if __name__ == "__main__":
 
-    #net_name='mesa_49.net'
-    #net_name = 'basic_plus_fe56_ni58.net'
-    #net_name = 'pp_cno_extras_o18_ne22.net'
-    #net_name = 'MIST2_36.net'
     net_name = 'MIST2_49.net'
     vvcrit = 0.4
 
@@ -120,13 +116,6 @@ if __name__ == "__main__":
 
     new_inlist_name = '<<MASS>>M_'+feh_fmt+'_'+afe_fmt+'.inlist'
    
-    new_name = os.path.join(os.environ['MESA_DIR'], 'data/atm_data/') + 'table10_summary.txt'
-    #old_name = os.path.join(os.environ['MESA_DIR'], 'data/atm_data/') +'table10_summary_'+afe_fmt+'_mdwarf.txt'
-    old_name = os.path.join(os.environ['MESA_DIR'], 'data/atm_data/') +'table10_summary_'+afe_fmt+'.txt'
-
-    print('cp ' + old_name + ' ' + new_name)
-    os.system('cp ' + old_name + ' ' + new_name)
-        
     #Run Aaron's code to get the abundances
     shutil.copy(os.path.join(os.environ["XA_CALC_DIR"],"initial_xa_calculator"),os.environ['MIST_CODE_DIR'])
     os.system(os.path.join(os.environ['MIST_CODE_DIR'],"initial_xa_calculator") +\
