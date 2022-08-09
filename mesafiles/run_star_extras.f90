@@ -26,6 +26,7 @@ module run_star_extras
   use const_def
   use crlibm_lib
   use atm_lib
+  use atm_def
 
   implicit none
 

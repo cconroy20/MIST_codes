@@ -92,6 +92,9 @@ if __name__ == "__main__":
     print "**********************MAKE ISOCHRONES***********************"
     print "************************************************************"
     make_eeps_isos.make_eeps_isos(runname, basic=False, fsps=True)
-#    if dobotheeps:
-#        make_eeps_isos.make_eeps_isos(runname, basic=True)
+    
+    print "************************************************************"
+    print "****************MOVING TO LONG-TERM STORAGE*****************"
+    print "************************************************************"
+    os.system("mv " + os.path.join(os.environ['MIST_GRID_DIR'],runname) + " " + os.path.join(os.environ['STORE_DIR'],runname))
 

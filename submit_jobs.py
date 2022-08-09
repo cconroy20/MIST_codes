@@ -52,16 +52,13 @@ if __name__ == "__main__":
         print "* vvcrit and net_name are optional. They default to 0.4 and mesa_49.net."
         sys.exit(0)
     elif len(sys.argv) == 3:
-        #runname = sys.argv[1]
         FeH = float(sys.argv[1])
         aFe = float(sys.argv[2])
     elif len(sys.argv) == 4:
-        #runname = sys.argv[1]
         FeH = float(sys.argv[1])
         aFe = float(sys.argv[2])
         vvcrit = float(sys.argv[3])
     elif len(sys.argv) > 4:
-        #runname = sys.argv[1]
         FeH = float(sys.argv[1])
         aFe = float(sys.argv[2])
         vvcrit = float(sys.argv[3])
@@ -74,16 +71,13 @@ if __name__ == "__main__":
     runname = name(FeH,aFe) + suffix
 
     print('grid name is: {0}'.format(runname))
-    print('[Fe/H] = {0}'.format(FeH))
-    print('[a/Fe] = {0}'.format(aFe))
+    print('[Fe/H]  = {0}'.format(FeH))
+    print('[a/Fe]  = {0}'.format(aFe))
     print('v/vcrit = {0}'.format(vvcrit))
     print('network = {0}'.format(net_name))
-    #sys.exit(0)
 
     dirname = os.path.join(os.environ['MIST_GRID_DIR'], runname)    
    
-    print dirname
- 
     #Create a working directory
     try:
         os.mkdir(dirname)
@@ -93,7 +87,7 @@ if __name__ == "__main__":
     
     #Generate inlists using template inlist files
     tempstor_inlist_dir = os.path.join(os.environ['MESAWORK_DIR'], 'inlists/inlists_'+'_'.join(runname.split('/')))
-#    new_inlist_name = '<<MASS>>M.inlist'
+    new_inlist_name = '<<MASS>>M.inlist'
     path_to_inlist_lowinter = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_lowinter')
     path_to_inlist_VLM = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_VLM')
     path_to_inlist_high = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_high')
@@ -109,13 +103,6 @@ if __name__ == "__main__":
     else:
         afe_fmt = 'afe+'+str(aFe)
  
-    if FeH < 0:
-        feh_fmt = "feh{0:5.2f}".format(FeH)
-    else:
-        feh_fmt = "feh+{0:4.2f}".format(FeH)
-
-    new_inlist_name = '<<MASS>>M_'+feh_fmt+'_'+afe_fmt+'.inlist'
-   
     #Run Aaron's code to get the abundances
     shutil.copy(os.path.join(os.environ["XA_CALC_DIR"],"initial_xa_calculator"),os.environ['MIST_CODE_DIR'])
     os.system(os.path.join(os.environ['MIST_CODE_DIR'],"initial_xa_calculator") +\
@@ -154,19 +141,12 @@ if __name__ == "__main__":
         #Populate each directory with the most recent my_history columns and profile columns
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/my_history_columns.list'),\
                 os.path.join(path_to_onemassdir, 'my_history_columns.list'))
-        #shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/my_profile_columns.list'),\
-        #        os.path.join(path_to_onemassdir, 'my_profile_columns.list'))
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/run_star_extras.f90'),\
                 os.path.join(path_to_onemassdir, 'src/run_star_extras.f90'))
-	#shutil.copy(os.path.join(os.environ['MESA_DIR'], 'star/work/star'),\
-	#	os.path.join(path_to_onemassdir, 'star'))        
 
         #Populate each directory with the input abundance file named input_initial_xa.data and input_XYZ
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'input_initial_xa.data'), path_to_onemassdir)
         shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'input_XYZ'), path_to_onemassdir)
-
-        #Populate each directory with the opacity configuration file
-        #shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/kap_config_file.txt'), path_to_onemassdir)
 
         #Create and move the SLURM file to the correct directory
         runbasefile = os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/SLURM_MISTgrid.sh')
@@ -183,3 +163,4 @@ if __name__ == "__main__":
     os.remove(os.path.join(os.environ['MIST_CODE_DIR'], 'input_initial_xa.data'))
     os.remove(os.path.join(os.environ['MIST_CODE_DIR'], 'input_XYZ'))
     os.remove(os.path.join(os.environ['MIST_CODE_DIR'], 'initial_xa_calculator'))
+    shutil.rmtree(tempstor_inlist_dir)

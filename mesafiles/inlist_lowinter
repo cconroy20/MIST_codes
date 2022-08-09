@@ -52,7 +52,7 @@
       extras_rpar(3) = <<ROT>>d0 !rotation new_omega_div_omega_crit
       extras_rpar(4) = <<FEH>>d0 ! [Fe/H]
 
-      extras_cpar(1) = <<AFE>>
+      extras_cpar(1) = '<<AFE>>'
 
 / ! end of star_job namelist
 
