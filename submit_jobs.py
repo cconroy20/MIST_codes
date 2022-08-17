@@ -106,7 +106,7 @@ if __name__ == "__main__":
     #Run Aaron's code to get the abundances
     shutil.copy(os.path.join(os.environ["XA_CALC_DIR"],"initial_xa_calculator"),os.environ['MIST_CODE_DIR'])
     os.system(os.path.join(os.environ['MIST_CODE_DIR'],"initial_xa_calculator") +\
-        " " +  net_name + " " + str(FeH) + " " +str(aFe) + " 1.3245")
+        " " +  net_name + " " + str(FeH) + " " +str(aFe) + " 1.3")
         
     #Zbase needs to be set in MESA for Type II opacity tables. Get this from a file produced by Aaron's code
     with open('input_XYZ') as f:

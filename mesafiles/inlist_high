@@ -26,11 +26,10 @@
       set_uniform_initial_xa_from_file = .true.
 
       show_kap_info = .true.
-      !opacities with AGSS09 abundances
-      kappa_file_prefix = 'agss09_<<AFE>>'
-      kappa_lowT_prefix = 'lowT_fa05_agss09_<<AFE>>'
-      kappa_CO_prefix = 'agss09_<<AFE>>_co'
-      !kappa_config_file = 'kap_config_file.txt'
+      !opacities with GS98 abundances
+      kappa_file_prefix = 'gs98'
+      kappa_lowT_prefix = 'lowT_fa05_gs98'
+      kappa_CO_prefix = 'gs98_co'
 
       !use jina
       set_rates_preference = .true.
@@ -86,7 +85,7 @@
       !PHYSICS
   !    which_atm_option = 'tau_10_tables'
       which_atm_option = 'simple_photosphere'
-      mixing_length_alpha = 1.95d0
+      mixing_length_alpha = 2.09d0
       mlt_option = 'Henyey'
       mlt_use_rotation_correction = .false.
       okay_to_reduce_gradT_excess = .true.
