@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name="<<RUNNAME>>"
-#SBATCH --partition=conroy_priority,itc_cluster
+#SBATCH --partition=conroy,itc_cluster
 #SBATCH --constraint="intel"
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=12

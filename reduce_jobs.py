@@ -83,10 +83,10 @@ if __name__ == "__main__":
     print "************************************************************"
     reduce_jobs_utils.save_inlists(rawdirname)
     
-    print "************************************************************"
-    print "***************SORTING THE PHOTOS AND MODELS****************"
-    print "************************************************************"
-    reduce_jobs_utils.save_lowM_photo_model(rawdirname)
+ #   print "************************************************************"
+ #   print "***************SORTING THE PHOTOS AND MODELS****************"
+ #   print "************************************************************"
+ #   reduce_jobs_utils.save_lowM_photo_model(rawdirname)
     
     print "************************************************************"
     print "**********************MAKE ISOCHRONES***********************"
