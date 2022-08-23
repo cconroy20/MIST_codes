@@ -53,6 +53,8 @@
 
       extras_cpar(1) = '<<AFE>>'
 
+      extras_lpar(2) = .true.
+
 / ! end of star_job namelist
 
 &controls
@@ -71,7 +73,7 @@
       history_interval = 1
       terminal_interval = 100
       photo_digits = 5
-      photo_interval = 1000
+      photo_interval = 999999
 
       star_history_dbl_format = '(1pes32.16e3, 1x)'
       star_history_int_format = '(i32, 1x)'
