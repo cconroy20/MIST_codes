@@ -358,7 +358,7 @@ contains
     if (rot_set_check) then
        if ((s% job% extras_rpar(3) > 0.0d0) .and. (s% initial_mass > rot_full_off)) then
           !check if ZAMS is achieved, then set rotation
-          if ((abs(log10_cr(s% power_h_burn * Lsun / s% L(1))) < 1.0d-2) ) then
+          if ((abs(log10_cr(s% power_h_burn * Lsun / s% L(1))) < 1.0d-2) .and. (s% star_age > 10.d0)) then
              if (s% initial_mass <= rot_full_on) then
                 frac2 = (s% initial_mass - rot_full_off) / (rot_full_on - rot_full_off)
                 frac2 = 0.5d0*(1.0d0 - cos(pi*frac2))
@@ -437,7 +437,7 @@ contains
        if(s% Teff < 3.0d4 .and. s% L_surf < 1.0d0)then
           pre_WD_check = .false.
           !turn burning back on for WD phase
-          if(s% max_abar_for_burning < 0) s% max_abar_for_burning = 200
+          !if(s% max_abar_for_burning < 0) s% max_abar_for_burning = 200
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++++++'
           write(*,*) 'now at WD phase, model number ', s% model_number
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++++++'

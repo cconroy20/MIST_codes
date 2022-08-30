@@ -100,7 +100,7 @@
 
 
       !CONVECTION + MIXING
-      do_conv_premix = .false.
+      do_conv_premix = .true.
       conv_premix_avoid_increase = .true.
 
       !H core overshoot calibrated to M67

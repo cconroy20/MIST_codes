@@ -9,7 +9,7 @@
 
       !PMS
       create_pre_main_sequence_model = .true.
-      pre_ms_T_c = 8d5
+      pre_ms_T_c = 9d5
       pre_ms_relax_num_steps = 10
 
       !MISC. SETUP
