@@ -13,5 +13,7 @@
 export OMP_NUM_THREADS=12
 cd <<DIRNAME>>
 echo "SLURM JOB ID: $SLURM_JOB_ID"
+date "+DATE: %Y-%m-%d%nTIME: %H:%M:%S"
 ./mk
 ./star inlist_project
+date "+DATE: %Y-%m-%d%nTIME: %H:%M:%S"
