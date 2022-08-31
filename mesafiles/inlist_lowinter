@@ -85,7 +85,6 @@
       !WHEN TO STOP
       gamma_center_limit = 1.0d3
 
-
       !PHYSICS
       which_atm_option = 'tau_10_tables'
       mixing_length_alpha = 2.09d0
@@ -105,6 +104,7 @@
 
       !H core overshoot calibrated to M67
       overshoot_f_above_nonburn_core = 0.016d0
+      overshoot_f_above_burn_h_core  = 0.016d0
       overshoot_f_above_burn_h_core  = 0.016d0
       overshoot_f_above_burn_he_core = 0.016d0
       overshoot_f_above_burn_z_core  = 0.016d0
