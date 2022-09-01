@@ -355,10 +355,14 @@ contains
     rot_full_off = s% job% extras_rpar(1) !1.2
     rot_full_on = s% job% extras_rpar(2) !1.8
 
+    !IF (s% star_age > 1.d7) THEN 
+    !   s% log_L_upper_limit = 2.8
+    !ENDIF
+
     if (rot_set_check) then
        if ((s% job% extras_rpar(3) > 0.0d0) .and. (s% initial_mass > rot_full_off)) then
           !check if ZAMS is achieved, then set rotation
-          if ((abs(log10_cr(s% power_h_burn * Lsun / s% L(1))) < 1.0d-2) .and. (s% star_age > 10.d0)) then
+          if ((abs(log10_cr(s% power_h_burn * Lsun / s% L(1))) < 1.0d-2) .and. (s% star_age > 1.0d2)) then
              if (s% initial_mass <= rot_full_on) then
                 frac2 = (s% initial_mass - rot_full_off) / (rot_full_on - rot_full_off)
                 frac2 = 0.5d0*(1.0d0 - cos(pi*frac2))
