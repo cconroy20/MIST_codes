@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
         #Create and move the SLURM file to the correct directory
         runbasefile = os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/SLURM_MISTgrid.sh')
-        slurmfile = make_slurm_sh.make_slurm_sh(inlistname, path_to_onemassdir, runbasefile)
+        slurmfile = make_slurm_sh.make_slurm_sh(inlistname, path_to_onemassdir, runbasefile, name(FeH,aFe))
         shutil.move(slurmfile, path_to_onemassdir)
         
         #cd into the individual directory and submit the job

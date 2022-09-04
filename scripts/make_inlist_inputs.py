@@ -36,7 +36,7 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net):
 
 # MIST2 - low and intermediate
 #    bigmassgrid = np.unique(np.hstack((massgrid(0.5,9,0.5), massgrid(100,250,10) )))
-#    bigmassgrid = massgrid(0.6,1.2,0.05)
+#    bigmassgrid = massgrid(20,20,1.)
 
 # MIST2 - high
 #    bigmassgrid = np.unique(np.hstack((massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,25))))
@@ -45,10 +45,6 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net):
     bigmassgrid = np.unique(np.hstack((massgrid(0.5,2.0,0.05), massgrid(2.1,4.0,0.1), \
                                        massgrid(4.25,6.0,0.25), massgrid(6.5,9.0,0.5), \
                                        massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
-
-# for testing
-    #bigmassgrid = np.unique(np.hstack((massgrid(1,10,0.2))))
-    #bigmassgrid = np.unique(np.hstack((massgrid(3.0,4.0,0.1), massgrid(4.0,6.0,0.25), massgrid(6.5,9.0,0.5) ))) #, massgrid(100,300,25))))
 
 # MIST1
 #    bigmassgrid = np.unique(np.hstack((massgrid(0.1,0.3,0.05),massgrid(0.3,0.4,0.01),massgrid(0.4,2.0,0.05),\

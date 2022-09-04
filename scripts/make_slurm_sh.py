@@ -6,13 +6,14 @@ Args:
     inlistname: name of the inlist
     inlistdir: name of the inli
     runbasefile: the name of the template shell script
-    
+    head: the master directory name
+
 Returns:
     the name of the SLURM file
 
 """
 
-def make_slurm_sh(inlistname, inlistdir, runbasefile):
+def make_slurm_sh(inlistname, inlistdir, runbasefile, head):
     
     #Read the contents of the base file 
     infile = open(runbasefile, 'r')
@@ -21,7 +22,7 @@ def make_slurm_sh(inlistname, inlistdir, runbasefile):
 
     #Replace the keys with appropriate values
     runname = inlistname.strip(".inlist")
-    replaced_contents = infile_contents.replace('<<RUNNAME>>', runname)
+    replaced_contents = infile_contents.replace('<<RUNNAME>>', head+'_'+runname)
     replaced_contents = replaced_contents.replace('<<DIRNAME>>', inlistdir)
 
     #Find the mass of the model to assign appropriate runtime
