@@ -77,12 +77,14 @@ def gen_summary(rawdirname):
                     elif 'Socket timed out on send/recv operation' in line:
                         reason = 'socket_timed_out'
                         
+
+        # +DATE: %Y-%m-%d%nTIME: %H:%M:%S
         #Retrieve the run time information
         dates = subprocess.Popen('grep [0-9][0-9]:[0-9][0-9]:[0-9][0-9] ' + listoutfiles[index], shell=True, stdout=subprocess.PIPE)
         try:
             startdate, enddate = dates.stdout
-            startdate_fmt = datetime.strptime(startdate.rstrip('\n'), '%a %b %d %H:%M:%S %Z %Y')
-            enddate_fmt = datetime.strptime(enddate.rstrip('\n'), '%a %b %d %H:%M:%S %Z %Y')
+            startdate_fmt = datetime.strptime(startdate.strip('START: '), '%Y-%m-%d %H:%M:%S')
+            enddate_fmt = datetime.strptime(enddate.strip('END: '), '%Y-%m-%d %H:%M:%S')
             
             delta_time = (enddate_fmt - startdate_fmt)
             #Total run time in decimal hours
