@@ -83,8 +83,8 @@ def gen_summary(rawdirname):
         dates = subprocess.Popen('grep [0-9][0-9]:[0-9][0-9]:[0-9][0-9] ' + listoutfiles[index], shell=True, stdout=subprocess.PIPE)
         try:
             startdate, enddate = dates.stdout
-            startdate_fmt = datetime.strptime(startdate.strip('START: '), '%Y-%m-%d %H:%M:%S')
-            enddate_fmt = datetime.strptime(enddate.strip('END: '), '%Y-%m-%d %H:%M:%S')
+            startdate_fmt = datetime.strptime(startdate.decode('ascii').rstrip('\n').strip('START: '), '%Y-%m-%d %H:%M:%S')
+            enddate_fmt = datetime.strptime(enddate.decode('ascii').rstrip('\n').strip('END: '), '%Y-%m-%d %H:%M:%S')
             
             delta_time = (enddate_fmt - startdate_fmt)
             #Total run time in decimal hours
