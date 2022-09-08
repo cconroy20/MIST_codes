@@ -67,6 +67,11 @@ def gen_summary(rawdirname):
             if (len(errcontent) > 0):
                 status = 'FAILED'
                 reason = 'unknown_error'
+                for line in outcontent[-200:]:
+                    if 'now at late AGB phase' in line:
+                        reason = '@ late-AGB phase'
+                    if 'now at post AGB phase' in line:
+                        reason = '@ post-AGB phase'
                 for line in errcontent:
                     if 'DUE TO TIME LIMIT' in line:
                         reason = 'need_more_time'
@@ -77,7 +82,6 @@ def gen_summary(rawdirname):
                     elif 'Socket timed out on send/recv operation' in line:
                         reason = 'socket_timed_out'
                         
-
         # +DATE: %Y-%m-%d%nTIME: %H:%M:%S
         #Retrieve the run time information
         dates = subprocess.Popen('grep [0-9][0-9]:[0-9][0-9]:[0-9][0-9] ' + listoutfiles[index], shell=True, stdout=subprocess.PIPE)
@@ -92,10 +96,10 @@ def gen_summary(rawdirname):
             
         #If there is no end date
         except ValueError:
-            runtime = 'exceeded_req_time'
+            runtime = -999.
             
         #Populate the stat_summary dictionary
-        stat_summary[mass] = "{:10}".format(status) + "{:50}".format(reason) + "{:25}".format(runtime)
+        stat_summary[mass] = "{:10}".format(status) + "{:40}".format(reason) + "{:.1f}".format(runtime)
 
     keys = stat_summary.keys()
     #Sort by mass in ascending order
@@ -104,11 +108,11 @@ def gen_summary(rawdirname):
     #Write to a file
     summary_filename = "tracks_summary.txt"
     f = csv.writer(open(summary_filename, 'w'), delimiter='\t')
-    f.writerow(["{:15}".format('#Mass'), "{:10}".format('Status') + "{:50}".format('Reason') + "{:25}".format('Runtime')])
+    f.writerow(["{:6}".format('#Mass'), "{:10}".format('Status') + "{:40}".format('Reason') + "{:15}".format('Runtime (hr)')])
     f.writerow(['','','',''])
     
     for key in keys:
-        f.writerow(["{:15}".format(key), stat_summary[key]])
+        f.writerow(["{:6}".format(key), stat_summary[key]])
         
 def sort_histfiles(rawdirname):
     
