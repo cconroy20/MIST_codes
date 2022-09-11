@@ -83,7 +83,7 @@ if __name__ == "__main__":
         os.mkdir(dirname)
     except OSError:
         print "The directory already exists."
-        sys.exit(0)
+        #sys.exit(0)
     
     #Generate inlists using template inlist files
     tempstor_inlist_dir = os.path.join(os.environ['MESAWORK_DIR'], 'inlists/inlists_'+'_'.join(runname.split('/')))
@@ -131,6 +131,10 @@ if __name__ == "__main__":
 
         #Define an absolute path to this directory.
         path_to_onemassdir = os.path.join(dirname, onemassdir)
+        
+        #delete directory, if it exists
+        if os.path.exists(path_to_onemassdir):
+            shutil.rmtree(path_to_onemassdir)
 
         #Copy over the contents of the template directory
         shutil.copytree(os.path.join(os.environ['MESAWORK_DIR'], "cleanworkdir"), path_to_onemassdir)

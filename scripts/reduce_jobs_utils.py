@@ -106,7 +106,7 @@ def gen_summary(rawdirname):
     keys.sort()
     
     #Write to a file
-    summary_filename = "tracks_summary.txt"
+    summary_filename = "tracks_summary"+rawdirname.split("_raw")[0]+".txt"
     f = csv.writer(open(summary_filename, 'w'), delimiter='\t')
     f.writerow(["{:6}".format('#Mass'), "{:10}".format('Status') + "{:40}".format('Reason') + "{:15}".format('Runtime (hr)')])
     f.writerow(['','','',''])
