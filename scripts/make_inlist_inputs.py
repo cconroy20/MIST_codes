@@ -56,9 +56,9 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net):
     if (startype == 'VeryLow'):
         massindex = np.where(bigmassgrid <= 0.4)
     elif (startype == 'Intermediate'):
-        massindex = np.where((bigmassgrid < 8.0) & (bigmassgrid > 0.4))
+        massindex = np.where((bigmassgrid < 7.0) & (bigmassgrid > 0.4))
     elif (startype == 'VeryHigh'):
-        massindex = np.where(bigmassgrid >= 10.0)
+        massindex = np.where(bigmassgrid >= 7.0)
     else:
         print 'Invalid choice.'
         sys.exit(0)
