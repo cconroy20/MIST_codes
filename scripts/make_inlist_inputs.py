@@ -35,16 +35,15 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net):
     massgrid = lambda i,f,step: np.linspace(i,f,round(((f-i)/step))+1.0)
 
 # MIST2 - low and intermediate
-#    bigmassgrid = np.unique(np.hstack((massgrid(0.5,9,0.5), massgrid(100,250,10) )))
-#    bigmassgrid = massgrid(20,20,1.)
+    #bigmassgrid = np.unique(np.hstack((massgrid(0.5,9,0.5), massgrid(100,250,10) )))
 
 # MIST2 - high
-#    bigmassgrid = np.unique(np.hstack((massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,25))))
+    bigmassgrid = np.unique(np.hstack((massgrid(8,20,2), massgrid(20,60,5))))
 
 # MIST2 - full
-    bigmassgrid = np.unique(np.hstack((massgrid(0.5,2.0,0.05), massgrid(2.1,4.0,0.1), \
-                                       massgrid(4.25,6.0,0.25), massgrid(6.5,9.0,0.5), \
-                                       massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
+#    bigmassgrid = np.unique(np.hstack((massgrid(0.5,2.0,0.05), massgrid(2.1,4.0,0.1), \
+#                                       massgrid(4.25,6.0,0.25), massgrid(6.5,9.0,0.5), \
+#                                       massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
 
    # bigmassgrid = np.unique(np.hstack((massgrid(7.0,9.0,0.5), \
    #                                    massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))

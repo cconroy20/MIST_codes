@@ -68,7 +68,8 @@ if __name__ == "__main__":
     reduce_jobs_utils.gen_summary(rawdirname)
     
     #Copy the summary file
-    os.system("mv tracks_summary.txt " + newdirname)
+    #print "mv tracks_summary_"+rawdirname.split("_raw")[0]+".txt" + newdirname
+    os.system("mv tracks_summary_"+rawdirname.split("_raw")[0]+".txt " + newdirname)
     
     print "************************************************************"
     print "****************SAVING THE ABUNDANCES FILE******************"

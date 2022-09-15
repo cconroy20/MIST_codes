@@ -45,12 +45,12 @@ def gen_summary(rawdirname):
         with open(listoutfiles[index], 'r') as outfile:
             outcontent = outfile.readlines()
 
-        status = ''
+        status = 'FAILED'
         termination_reason = ''
         reason = ''
 
         #Retrieve the stopping reasons
-        for line in outcontent[-30:]:
+        for line in outcontent[-100:]:
             if 'termination code' in line:
                 termination_reason = line.split('termination code: ')[1].split('\n')[0]
                 reason = termination_reason.replace(' ', '_')
@@ -64,23 +64,29 @@ def gen_summary(rawdirname):
                 status = 'FAILED'
         
         if status != 'OK':
+            reason = 'unknown_error'
             if (len(errcontent) > 0):
-                status = 'FAILED'
-                reason = 'unknown_error'
-                for line in outcontent[-200:]:
-                    if 'now at late AGB phase' in line:
-                        reason = '@ late-AGB phase'
-                    if 'now at post AGB phase' in line:
-                        reason = '@ post-AGB phase'
                 for line in errcontent:
                     if 'DUE TO TIME LIMIT' in line:
-                        reason = 'need_more_time'
-                        break
-                    elif 'exceeded memory limit' in line:
-                        reason = 'memory_exceeded'
-                        break
-                    elif 'Socket timed out on send/recv operation' in line:
-                        reason = 'socket_timed_out'
+                        reason = 'hit time limit'
+            for line in outcontent:
+                if 'now at TP-AGB phase' in line:
+                    reason = '@ TP-AGB phase'
+                if 'now at late AGB phase' in line:
+                    reason = '@ late-AGB phase'
+                if 'now at post AGB phase' in line:
+                    reason = '@ post-AGB phase'
+                if 'now at WD phase' in line:
+                    reason = '@ WD phase'
+              #  for line in errcontent:
+              #      if 'DUE TO TIME LIMIT' in line:
+              #          reason = 'need_more_time'
+              #          break
+              #      elif 'exceeded memory limit' in line:
+              #          reason = 'memory_exceeded'
+              #          break
+              #      elif 'Socket timed out on send/recv operation' in line:
+              #          reason = 'socket_timed_out'
                         
         # +DATE: %Y-%m-%d%nTIME: %H:%M:%S
         #Retrieve the run time information
@@ -96,23 +102,23 @@ def gen_summary(rawdirname):
             
         #If there is no end date
         except ValueError:
-            runtime = -999.
+            runtime = -1.
             
         #Populate the stat_summary dictionary
-        stat_summary[mass] = "{:10}".format(status) + "{:40}".format(reason) + "{:.1f}".format(runtime)
+        stat_summary[mass] = "{:12}".format(status) + "{:40}".format(reason) + "{:.1f}".format(runtime)
 
     keys = stat_summary.keys()
     #Sort by mass in ascending order
     keys.sort()
     
     #Write to a file
-    summary_filename = "tracks_summary"+rawdirname.split("_raw")[0]+".txt"
+    summary_filename = "tracks_summary_"+rawdirname.split("_raw")[0]+".txt"
     f = csv.writer(open(summary_filename, 'w'), delimiter='\t')
-    f.writerow(["{:6}".format('#Mass'), "{:10}".format('Status') + "{:40}".format('Reason') + "{:15}".format('Runtime (hr)')])
+    f.writerow([" "+"{:6}".format('#Mass'), "{:12}".format('Status') + "{:40}".format('Reason') + "{:15}".format('Runtime (hr)')])
     f.writerow(['','','',''])
     
     for key in keys:
-        f.writerow(["{:6}".format(key), stat_summary[key]])
+        f.writerow([" "+"{:.2f}".format(float(key)/100.), stat_summary[key]])
         
 def sort_histfiles(rawdirname):
     

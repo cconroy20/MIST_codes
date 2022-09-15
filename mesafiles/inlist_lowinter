@@ -25,6 +25,9 @@
       file_for_uniform_xa = 'input_initial_xa.data'
       set_uniform_initial_xa_from_file = .true.
 
+      ! For now this primarily targets the EOS data structures.
+      num_steps_for_garbage_collection = -1
+
       show_kap_info = .true.
       !opacities with AGSS09 abundances
       kappa_file_prefix = 'gs98'
