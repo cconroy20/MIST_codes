@@ -105,26 +105,19 @@
       do_conv_premix = .true.
       conv_premix_avoid_increase = .true.
 
-      !H core overshoot calibrated to M67
       overshoot_f_above_nonburn_core = 0.016d0
-      overshoot_f_above_burn_h_core  = 0.016d0
-      overshoot_f_above_burn_h_core  = 0.016d0
       overshoot_f_above_burn_he_core = 0.016d0
       overshoot_f_above_burn_z_core  = 0.016d0
       overshoot_f0_above_nonburn_core = 0.008d0
-      overshoot_f0_above_burn_h_core  = 0.008d0
       overshoot_f0_above_burn_he_core = 0.008d0
       overshoot_f0_above_burn_z_core  = 0.008d0
 
-      !envelope overshoot calibrated to the sun
       overshoot_f_above_nonburn_shell = 0.016d0
-      overshoot_f_below_nonburn_shell = 0.016d0
       overshoot_f_above_burn_h_shell  = 0.016d0
       overshoot_f_below_burn_h_shell  = 0.016d0
       overshoot_f_above_burn_z_shell  = 0.016d0
       overshoot_f_below_burn_z_shell  = 0.016d0
       overshoot_f0_above_nonburn_shell = 0.008d0
-      overshoot_f0_below_nonburn_shell = 0.008d0
       overshoot_f0_above_burn_h_shell  = 0.008d0
       overshoot_f0_below_burn_h_shell  = 0.008d0
       overshoot_f0_below_burn_z_shell  = 0.008d0
