@@ -91,34 +91,11 @@ contains
     endif
 
     !increase overshoot from 4 Msun up to the Brott et al. value at 8 Msun
-    !s% overshoot_f_above_nonburn_core  = f_ov_fcn_of_mass(s% initial_mass)
     s% overshoot_f_above_burn_h_core   = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_above_burn_he_core  = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_above_burn_z_core   = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_above_nonburn_shell = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_below_nonburn_shell = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_above_burn_h_shell  = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_below_burn_h_shell  = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_above_burn_he_shell = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_below_burn_he_shell = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_above_burn_z_shell  = f_ov_fcn_of_mass(s% initial_mass)
-    !s% overshoot_f_below_burn_z_shell  = f_ov_fcn_of_mass(s% initial_mass)
-
-    !s% overshoot_f0_above_nonburn_core = 8.0d-3
     s% overshoot_f0_above_burn_h_core  = 8.0d-3
-    !s% overshoot_f0_above_burn_he_core = 8.0d-3
-    !s% overshoot_f0_above_burn_z_core  = 8.0d-3
-    !s% overshoot_f0_above_nonburn_shell = 8.0d-3
-    !s% overshoot_f0_below_nonburn_shell = 8.0d-3
-    !s% overshoot_f0_above_burn_h_shell  = 8.0d-3
-    !s% overshoot_f0_below_burn_h_shell  = 8.0d-3
-    !s% overshoot_f0_above_burn_he_shell = 8.0d-3
-    !s% overshoot_f0_below_burn_he_shell = 8.0d-3
-    !s% overshoot_f0_below_burn_z_shell  = 8.0d-3
-    !s% overshoot_f0_above_burn_z_shell  = 8.0d-3
 
     !now set f_ov_below_nonburn from [Fe/H] at extras_cpar(4)
-    s% overshoot_f_below_nonburn_shell = f_ov_below_nonburn(s% job% extras_rpar(4))
+    s% overshoot_f_below_nonburn_shell = f_ov_below_nonburn(s% job% extras_rpar(4), s% initial_mass)
     s% overshoot_f0_below_nonburn_shell = 0.5d0 * s% overshoot_f_below_nonburn_shell
 
 
@@ -129,13 +106,17 @@ contains
   end function extras_startup
 
 
-  function f_ov_below_nonburn(feh) result(f_ov)
-    real(dp), intent(in) :: feh
+  function f_ov_below_nonburn(feh,minit) result(f_ov)
+    real(dp), intent(in) :: feh, minit
     real(dp) :: f_ov
     real(dp), parameter :: max_f = 8.0d-2
     real(dp), parameter :: min_f = 1.0d-2
-    f_ov = 0.016_dp - 0.027_dp*feh
-    f_ov = min(max(f_ov, min_f),max_f)
+    if (minit < 2.0_dp) then
+      f_ov = 0.016_dp - 0.027_dp*feh
+      f_ov = min(max(f_ov, min_f),max_f)
+    else
+      f_ov = 0.016_dp
+    endif
   end function f_ov_below_nonburn
 
 
