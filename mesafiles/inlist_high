@@ -95,11 +95,12 @@
       Pextra_factor = 2.0d0
 
       use_Ledoux_criterion = .true.
+      alpha_semiconvection = 0.1
       Thermohaline_option = 'Kippenhahn'
       Thermohaline_coeff = 26.318945069571622d0 !(8/3)*pi^2*alpha^2 where alpha==1.0 from Charbonnel & Zahn (2007)
 
       !CONVECTION + MIXING
-      do_conv_premix = .true.
+      do_conv_premix = .false.
       conv_premix_avoid_increase = .true.
 
       !H core overshoot calibrated to M67
@@ -148,7 +149,6 @@
 
       am_D_mix_factor = 0.033d0
       am_gradmu_factor = 0.05d0
-
 
       !FULLER et al. TAYLER-SPRUIT
       am_nu_ST_factor = 0.0d0

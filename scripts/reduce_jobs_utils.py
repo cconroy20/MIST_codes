@@ -64,7 +64,7 @@ def gen_summary(rawdirname):
                 status = 'FAILED'
         
         if status != 'OK':
-            reason = 'unknown_error'
+            #reason = 'unknown_error'
             if (len(errcontent) > 0):
                 for line in errcontent:
                     if 'DUE TO TIME LIMIT' in line:
