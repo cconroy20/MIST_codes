@@ -86,7 +86,7 @@
       write_profiles_flag = .false.
 
       !WHEN TO STOP
-      gamma_center_limit = 1.0d3
+      gamma_center_limit = 1.0d2
 
       !PHYSICS
       which_atm_option = 'tau_10_tables'
@@ -102,7 +102,7 @@
 
 
       !CONVECTION + MIXING
-      do_conv_premix = .true.
+      do_conv_premix = .false.
       conv_premix_avoid_increase = .true.
 
       overshoot_f_above_nonburn_core = 0.016d0
