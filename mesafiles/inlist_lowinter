@@ -30,8 +30,8 @@
 
       show_kap_info = .true.
       !opacities with AGSS09 abundances
-      kappa_file_prefix = 'gs98'
-      kappa_lowT_prefix = 'lowT_fa05_gs98'
+      kappa_file_prefix = 'gs98_<<AFE>>'
+      kappa_lowT_prefix = 'lowT_fa05_gs98_<<AFE>>'
       kappa_CO_prefix = 'gs98_co'
 
       !use jina
