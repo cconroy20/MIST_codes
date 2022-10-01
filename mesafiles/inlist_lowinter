@@ -96,6 +96,7 @@
       okay_to_reduce_gradT_excess = .true.
       Pextra_factor = 2.0d0
 
+      alpha_semiconvection = 0.1
       use_Ledoux_criterion = .true.
       Thermohaline_option = 'Kippenhahn'
       Thermohaline_coeff = 26.318945069571622d0 !(8/3)*pi^2*alpha^2 where alpha==1.0 from Charbonnel & Zahn (2007)

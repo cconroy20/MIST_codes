@@ -45,11 +45,6 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net):
                                        massgrid(4.25,6.0,0.25), massgrid(6.5,9.0,0.5), \
                                        massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
 
-#    bigmassgrid = np.unique(np.hstack((massgrid(2.1,4.0,0.1), \
-#                                       massgrid(4.25,6.0,0.25), massgrid(6.5,9.0,0.5), \
-#                                       massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
-
-
 # MIST1
 #    bigmassgrid = np.unique(np.hstack((massgrid(0.1,0.3,0.05),massgrid(0.3,0.4,0.01),massgrid(0.4,2.0,0.05),\
 #					massgrid(2.0,4.0,0.1),massgrid(4.0,6.0,0.25),\
