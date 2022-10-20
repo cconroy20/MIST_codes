@@ -70,7 +70,7 @@
       use_gold_tolerances = .false.
       use_dedt_form_of_energy_eqn = .false.
       use_eosELM = .false.
-      use_eosDT2 = false.
+      use_eosDT2 = .false.
 
       !OUTPUT OPTIONS
       history_interval = 1
