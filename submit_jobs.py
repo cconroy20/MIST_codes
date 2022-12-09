@@ -65,11 +65,15 @@ if __name__ == "__main__":
         net_name = "'" + sys.argv[4] + "'"
         if len(sys.argv)>5:
             suffix = "_" + sys.argv[5]
-            gridtype=sys.argv[6]
-            customgrid=sys.argv[7].split()
         else:
             suffix = ""
-            gridtype = "DEFAULT"
+        if len(sys.argv)>6:
+            gridtype=sys.argv[6]
+        else:
+            gridtype="DEFAULT"
+        if len(sys.argv)>7:
+            customgrid=sys.argv[7].split()
+        else:
             customgrid = []
 
     runname = name(FeH,aFe) + suffix
