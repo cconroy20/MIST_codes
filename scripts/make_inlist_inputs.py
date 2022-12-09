@@ -51,7 +51,7 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net, gridtype="D
     #                                   massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
         bigmassgrid = np.unique(np.hstack((massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
     elif gridtype=="CUSTOM":
-        bigmassgrid = customgrid
+        bigmassgrid = np.array(customgrid)
     else:
         print("gridtype must be either DEFAULT or CUSTOM")
         sys.exit(0)

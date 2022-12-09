@@ -72,7 +72,7 @@ if __name__ == "__main__":
         else:
             gridtype="DEFAULT"
         if len(sys.argv)>7:
-            customgrid=sys.argv[7].split(',')
+            customgrid=[float(M) for M in sys.argv[7].split(',')]
         else:
             customgrid = []
 
@@ -83,6 +83,9 @@ if __name__ == "__main__":
     print('[a/Fe]  = {0}'.format(aFe))
     print('v/vcrit = {0}'.format(vvcrit))
     print('network = {0}'.format(net_name))
+    print('suffix = {0}'.format(suffix))
+    print('gridtype = {0}'.format(gridtype))
+    print('customgrid = {0}'.format(customgrid))
 
     dirname = os.path.join(os.environ['MIST_GRID_DIR'], runname)    
    
