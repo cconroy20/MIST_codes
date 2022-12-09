@@ -72,7 +72,7 @@ if __name__ == "__main__":
         else:
             gridtype="DEFAULT"
         if len(sys.argv)>7:
-            customgrid=sys.argv[7].split()
+            customgrid=sys.argv[7].split(',')
         else:
             customgrid = []
 
