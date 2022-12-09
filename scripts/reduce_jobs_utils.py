@@ -2,6 +2,7 @@ import glob
 import os
 import csv
 import subprocess
+from shutil import copyfile
 from datetime import datetime
 
 from scripts import mesa_hist_trim
@@ -120,7 +121,7 @@ def gen_summary(rawdirname):
     for key in keys:
         f.writerow([" "+"{:.2f}".format(float(key)/100.), stat_summary[key]])
         
-def sort_histfiles(rawdirname):
+def sort_histfiles(rawdirname,merge_TPAGB=True):
     
     """
 
@@ -134,6 +135,7 @@ def sort_histfiles(rawdirname):
 
     """
 
+
     #Get the list of history files (tracks)
     listofhist = glob.glob(os.path.join(os.environ['MIST_GRID_DIR'], os.path.join(rawdirname+'/*/LOGS/*.data')))
 
@@ -142,6 +144,50 @@ def sort_histfiles(rawdirname):
     histfiles_dirname = os.path.join(os.path.join(os.environ['MIST_GRID_DIR'], new_parentdirname + "/tracks"))
     os.mkdir(histfiles_dirname)
 
+    #Merge TP-AGB rerun if it exists
+    if merge_TPAGB:
+        for histfile in listofhist:
+            L1=False
+            L2=False
+            if 'M.data' in histfile:
+                file1=histfile
+                f1=open(file1,'r')
+                f1_data=f1.readlines()
+                f1.close()
+                L1=True
+
+                file2=file1.strip('M.data')+'M_TPAGB.data')
+                if os.path.isfile(file2):
+                    f2=open(file2,'r')
+                    f2_data=f2.readlines()
+                    f2.close()
+                    L2=True
+            if L1 and L2:
+                q=file1.index('.data')
+                file3=file1[0:q]+'_orig.data'
+                copyfile(file1,file3)
+
+                info = f2_data[6].split()
+                split=int(info[0].strip())
+
+                for k in range(6,len(f1_data)):
+                    i=f1_data[k].split()
+                    s=int(i[0].strip())
+                    if s > split-1:
+                        before=k
+                        break
+
+                tmpfile='tmp.data'
+                f3=open(tmpfile,'w')
+
+                for i in range(before):
+                    f3.write(f1_data[i])
+
+                for i in range(6,len(f2_data)):
+                    f3.write(f2_data[i])
+
+                f3.close()
+                os.rename(tmpfile,file1)
 
     #Trim repeated model numbers, then rename & copy the history files over
     for histfile in listofhist:

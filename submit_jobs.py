@@ -63,10 +63,14 @@ if __name__ == "__main__":
         aFe = float(sys.argv[2])
         vvcrit = float(sys.argv[3])
         net_name = "'" + sys.argv[4] + "'"
-        if len(sys.argv)==6:
+        if len(sys.argv)>5:
             suffix = "_" + sys.argv[5]
+            gridtype=sys.argv[6]
+            customgrid=sys.argv[7].split()
         else:
             suffix = ""
+            gridtype = "DEFAULT"
+            customgrid = []
 
     runname = name(FeH,aFe) + suffix
 
@@ -115,11 +119,11 @@ if __name__ == "__main__":
         zbase = float(f.readline().replace('D','E'))
 
     #Make the substitutions in the template inlists
-    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryLow', FeH, afe_fmt, zbase, vvcrit, net_name),\
+    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryLow', FeH, afe_fmt, zbase, vvcrit, net_name, gridtype, customgrid),\
         new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_VLM)
-    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'Intermediate', FeH, afe_fmt, zbase, vvcrit, net_name),\
+    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'Intermediate', FeH, afe_fmt, zbase, vvcrit, net_name, gridtype, customgrid),\
         new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_lowinter)
-    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryHigh', FeH, afe_fmt, zbase, vvcrit, net_name),\
+    make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryHigh', FeH, afe_fmt, zbase, vvcrit, net_name, gridtype, customgrid),\
         new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_high)
         
     inlist_list = os.listdir(tempstor_inlist_dir)

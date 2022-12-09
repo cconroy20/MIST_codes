@@ -29,11 +29,13 @@ Acknowledgment:
 import sys
 import numpy as np
     
-def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net):
+def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net, gridtype="DEFAULT", customgrid=[]):
     
     #Array of all masses
     massgrid = lambda i,f,step: np.linspace(i,f,round(((f-i)/step))+1.0)
 
+
+    if gridtype=="DEFAULT":
 # MIST2 - low and intermediate
     #bigmassgrid = np.unique(np.hstack((massgrid(0.5,9,0.5), massgrid(100,250,10) )))
 
@@ -47,8 +49,12 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net):
 
     #bigmassgrid = np.unique(np.hstack((massgrid(6.0,9.0,0.5), \
     #                                   massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
-    bigmassgrid = np.unique(np.hstack((massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
-
+        bigmassgrid = np.unique(np.hstack((massgrid(9,20,1), massgrid(20,100,5), massgrid(100,300,10))))
+    elif gridtype="CUSTOM":
+        bigmassgrid = customgrid
+    else:
+        print("gridtype must be either DEFAULT or CUSTOM")
+        sys.exit(0)
 
 # MIST1
 #    bigmassgrid = np.unique(np.hstack((massgrid(0.1,0.3,0.05),massgrid(0.3,0.4,0.01),massgrid(0.4,2.0,0.05),\
@@ -64,7 +70,7 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net):
     elif (startype == 'VeryHigh'):
         massindex = np.where(bigmassgrid >= 7.0)
     else:
-        print 'Invalid choice.'
+        print('Invalid choice.')
         sys.exit(0)
 
     #Create mass lists
