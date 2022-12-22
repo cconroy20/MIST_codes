@@ -91,13 +91,13 @@ contains
     endif
 
     !increase overshoot from 4 Msun up to the Brott et al. value at 8 Msun
-    s% overshoot_f_above_burn_h_core   = f_ov_fcn_of_mass(s% initial_mass)
+    !s% overshoot_f_above_burn_h_core   = f_ov_fcn_of_mass(s% initial_mass)
+    s% overshoot_f_above_burn_h_core   = 0.016_dp
     s% overshoot_f0_above_burn_h_core  = 8.0d-3
 
     !now set f_ov_below_nonburn from [Fe/H] at extras_cpar(4)
     s% overshoot_f_below_nonburn_shell = f_ov_below_nonburn(s% job% extras_rpar(4), s% initial_mass)
     s% overshoot_f0_below_nonburn_shell = 0.5d0 * s% overshoot_f_below_nonburn_shell
-
 
     !set the correct summary file for the BC tables depending on [a/Fe]        
     tau10_summary = 'table10_summary_' // trim(s% job% extras_cpar(1)) // '.txt'
@@ -123,7 +123,7 @@ contains
   function f_ov_fcn_of_mass(m) result(f_ov)
     real(dp), intent(in) :: m
     real(dp) :: f_ov, frac
-    real(dp), parameter :: f1 = 0.016_dp, f2=0.0415_dp
+    real(dp), parameter :: f1 = 0.016_dp, f2 = 0.0415_dp
     if(m < 4.0d0) then
        frac = 0.0d0
     elseif(m > 8.0d0) then
@@ -380,27 +380,29 @@ contains
        s% delta_lgTeff_hard_limit = -1
        s% delta_lgL_limit = -1
        s% delta_lgL_hard_limit = -1
-       s% Blocker_scaling_factor = 2.0d0
+       !s% Blocker_scaling_factor = 2.0d0
        s% varcontrol_target = 2.0d0*s% varcontrol_target
        write(*,*) ' varcontrol_target = ', s% varcontrol_target
-       write(*,*) ' switch to simple_photosphere             '
+       !write(*,*) ' switch to simple_photosphere             '
        write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
     endif
 
     ! late AGB
     if(late_AGB_check)then
-       if (s% initial_mass < 10.0d0 .and. s% he_core_mass/s% star_mass > 0.9d0) then
+       if (s% initial_mass < 10.0d0 .and. s% he_core_mass/s% star_mass > 0.95d0) then
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
           write(*,*) 'now at late AGB phase, model number ', s% model_number
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
-          s% Blocker_scaling_factor = 5.0d0
+          photoname = 'photos/late_AGB_photo'
+          call star_save_for_restart(id, photoname, ierr)
+          s% Blocker_scaling_factor = 2.0d0
           late_AGB_check=.false.
           post_AGB_check=.true.
        endif
     endif
 
     if(post_AGB_check)then
-       if(s% Teff > 3.0d4)then
+       if(s% Teff > 1.0d4)then
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
           write(*,*) 'now at post AGB phase, model number ', s% model_number
           !save a model and photo
@@ -413,6 +415,11 @@ contains
           endif
           post_AGB_check = .false.
           pre_WD_check = .true.
+
+          termination_code_str(t_xtra2) = 'stopping at post AGB'
+          s% termination_code = t_xtra2
+          extras_finish_step = terminate
+
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
        endif
     endif

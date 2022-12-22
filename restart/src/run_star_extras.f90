@@ -91,7 +91,8 @@ contains
     endif
 
     !increase overshoot from 4 Msun up to the Brott et al. value at 8 Msun
-    s% overshoot_f_above_burn_h_core   = f_ov_fcn_of_mass(s% initial_mass)
+    !s% overshoot_f_above_burn_h_core   = f_ov_fcn_of_mass(s% initial_mass)
+    s% overshoot_f_above_burn_h_core   = 0.016_dp
     s% overshoot_f0_above_burn_h_core  = 8.0d-3
 
     !now set f_ov_below_nonburn from [Fe/H] at extras_cpar(4)
@@ -384,7 +385,7 @@ contains
       ! s% Blocker_scaling_factor = 2.0d0
        s% varcontrol_target = 2.0d0*s% varcontrol_target
        write(*,*) ' varcontrol_target = ', s% varcontrol_target
-       write(*,*) ' switch to simple_photosphere             '
+       !write(*,*) ' switch to simple_photosphere             '
        write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
     endif
 
@@ -394,6 +395,8 @@ contains
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
           write(*,*) 'now at late AGB phase, model number ', s% model_number
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
+          photoname = 'photos/late_AGB_photo'
+          call star_save_for_restart(id, photoname, ierr)
           s% Blocker_scaling_factor = 2.0d0
           late_AGB_check=.false.
           post_AGB_check=.true.
@@ -401,7 +404,7 @@ contains
     endif
 
     if(post_AGB_check)then
-       if(s% Teff > 3.0d4)then
+       if(s% Teff > 1.0d4)then
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
           write(*,*) 'now at post AGB phase, model number ', s% model_number
           !save a model and photo
@@ -414,6 +417,11 @@ contains
           endif
           post_AGB_check = .false.
           pre_WD_check = .true.
+
+          termination_code_str(t_xtra2) = 'stopping at post AGB'
+          s% termination_code = t_xtra2
+          extras_finish_step = terminate
+
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
        endif
     endif

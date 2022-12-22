@@ -10,6 +10,9 @@ dir=$1
 tarr=(`ls $MIST_GRID_DIR/$dir`)
 tlen=${#tarr[*]}
 
+#this restricts to M<=3.9
+tlen=50
+
 for j in `seq 1 $tlen`; do
 
     mdir=${tarr[$j-1]}
