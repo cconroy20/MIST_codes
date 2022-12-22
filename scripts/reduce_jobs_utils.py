@@ -2,7 +2,7 @@ import glob
 import os
 import csv
 import subprocess
-from shutil import copyfile, move
+from shutil import copyfile
 from datetime import datetime
 
 from scripts import mesa_hist_trim
@@ -158,7 +158,8 @@ def sort_histfiles(rawdirname,merge_TPAGB=True):
                 f1.close()
                 L1=True
 
-                file2=file1.strip('M.data')+'M_TPAGB.data'
+                file2=file1.strip('M.data')+'M_TPAGB.data')
+
                 if os.path.isfile(file2):
                     f2=open(file2,'r')
                     f2_data=f2.readlines()
@@ -189,7 +190,9 @@ def sort_histfiles(rawdirname,merge_TPAGB=True):
                     f3.write(f2_data[i])
 
                 f3.close()
-                move(tmpfile,file1)
+
+                os.rename(tmpfile,file1)
+
 
     #Trim repeated model numbers, then rename & copy the history files over
     for histfile in listofhist:
