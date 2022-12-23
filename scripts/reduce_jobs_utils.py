@@ -2,7 +2,7 @@ import glob
 import os
 import csv
 import subprocess
-from shutil import copyfile
+from shutil import copyfile, move
 from datetime import datetime
 
 from scripts import mesa_hist_trim
@@ -48,10 +48,10 @@ def gen_summary(rawdirname):
 
         status = 'FAILED'
         termination_reason = ''
-        reason = ''
+        reason = '-- unknown --'
 
         #Retrieve the stopping reasons
-        for line in outcontent[-100:]:
+        for line in outcontent[-500:]:
             if 'termination code' in line:
                 termination_reason = line.split('termination code: ')[1].split('\n')[0]
                 reason = termination_reason.replace(' ', '_')
@@ -64,6 +64,15 @@ def gen_summary(rawdirname):
                 reason = termination_reason.replace(' ', '_')
                 status = 'FAILED'
         
+        if reason == 'central_C12_mass_fraction_below_1e-2':
+            reason = 'stopping_at_cenC12_limit'
+
+        if reason == 'central_H1_mass_fraction_below_0.01':
+            reason = 'stopping_at_cenH1_limit'
+
+        if reason == 'logQ_min_limit':
+            status = 'FAILED'
+
         if status != 'OK':
             #reason = 'unknown_error'
             if (len(errcontent) > 0):
@@ -76,9 +85,13 @@ def gen_summary(rawdirname):
                 if 'now at late AGB phase' in line:
                     reason = '@ late-AGB phase'
                 if 'now at post AGB phase' in line:
-                    reason = '@ post-AGB phase'
+                    #reason = '@ post-AGB phase'
+                    reason = 'stopping_at_post_AGB'
+                    status = 'OK'
                 if 'now at WD phase' in line:
-                    reason = '@ WD phase'
+                    #reason = '@ WD phase'
+                    reason = 'stopping_at_post_AGB'
+                    status = 'OK'
               #  for line in errcontent:
               #      if 'DUE TO TIME LIMIT' in line:
               #          reason = 'need_more_time'
@@ -106,7 +119,7 @@ def gen_summary(rawdirname):
             runtime = -1.
             
         #Populate the stat_summary dictionary
-        stat_summary[mass] = "{:12}".format(status) + "{:40}".format(reason) + "{:.1f}".format(runtime)
+        stat_summary[mass] = "{:12}".format(status) + "{:30}".format(reason) + "{:4.1f}".format(runtime)
 
     keys = stat_summary.keys()
     #Sort by mass in ascending order
@@ -115,7 +128,7 @@ def gen_summary(rawdirname):
     #Write to a file
     summary_filename = "tracks_summary_"+rawdirname.split("_raw")[0]+".txt"
     f = csv.writer(open(summary_filename, 'w'), delimiter='\t')
-    f.writerow([" "+"{:6}".format('#Mass'), "{:12}".format('Status') + "{:40}".format('Reason') + "{:15}".format('Runtime (hr)')])
+    f.writerow(["{:6}".format('# Mass'), "{:12}".format('Status') + "{:30}".format('Reason') + "{:15}".format('Runtime (hr)')])
     f.writerow(['','','',''])
     
     for key in keys:
@@ -158,8 +171,7 @@ def sort_histfiles(rawdirname,merge_TPAGB=True):
                 f1.close()
                 L1=True
 
-                file2=file1.strip('M.data')+'M_TPAGB.data')
-
+                file2=file1.strip('M.data')+'M_TPAGB.data'
                 if os.path.isfile(file2):
                     f2=open(file2,'r')
                     f2_data=f2.readlines()
@@ -190,8 +202,8 @@ def sort_histfiles(rawdirname,merge_TPAGB=True):
                     f3.write(f2_data[i])
 
                 f3.close()
-
-                os.rename(tmpfile,file1)
+                move(tmpfile,file1)
+                #os.rename(tmpfile,file1)
 
 
     #Trim repeated model numbers, then rename & copy the history files over
