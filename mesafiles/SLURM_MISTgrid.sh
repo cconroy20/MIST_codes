@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=12
 #SBATCH -t <<RUNTIME>>
-#SBATCH --mem 12000
+#SBATCH --mem 18000
 #SBATCH -o <<RUNNAME>>.o
 #SBATCH -e <<RUNNAME>>.e
 

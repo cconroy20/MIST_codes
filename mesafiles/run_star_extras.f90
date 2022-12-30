@@ -395,7 +395,7 @@ contains
           write(*,*) '++++++++++++++++++++++++++++++++++++++++++'
           photoname = 'photos/late_AGB_photo'
           call star_save_for_restart(id, photoname, ierr)
-          s% Blocker_scaling_factor = 2.0d0
+          !s% Blocker_scaling_factor = 2.0d0
           late_AGB_check=.false.
           post_AGB_check=.true.
        endif

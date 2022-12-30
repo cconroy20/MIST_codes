@@ -46,6 +46,10 @@ def gen_summary(rawdirname):
         with open(listoutfiles[index], 'r') as outfile:
             outcontent = outfile.readlines()
 
+        ff = os.path.join(os.environ['MIST_GRID_DIR'],rawdirname.split("_raw")[0]) + '/eeps/'+mass+'M.track.eep'
+        fp = open(ff, "r")
+        eep_len = len(fp.readlines())
+
         status = 'FAILED'
         termination_reason = ''
         reason = '-- unknown --'
@@ -74,7 +78,6 @@ def gen_summary(rawdirname):
             status = 'FAILED'
 
         if status != 'OK':
-            #reason = 'unknown_error'
             if (len(errcontent) > 0):
                 for line in errcontent:
                     if 'DUE TO TIME LIMIT' in line:
@@ -101,7 +104,15 @@ def gen_summary(rawdirname):
               #          break
               #      elif 'Socket timed out on send/recv operation' in line:
               #          reason = 'socket_timed_out'
+
+        if (float(mass)/100. < 7.0 and eep_len >= 1421):
+            status = 'OK'
+            reason = 'stopping_at_post_AGB'
                         
+        if (float(mass)/100. >= 7.0 and eep_len >= 820):
+            status = 'OK'
+            reason = 'stopping_at_cenC12_limit'
+
         # +DATE: %Y-%m-%d%nTIME: %H:%M:%S
         #Retrieve the run time information
         dates = subprocess.Popen('grep [0-9][0-9]:[0-9][0-9]:[0-9][0-9] ' + listoutfiles[index], shell=True, stdout=subprocess.PIPE)
@@ -119,7 +130,7 @@ def gen_summary(rawdirname):
             runtime = -1.
             
         #Populate the stat_summary dictionary
-        stat_summary[mass] = "{:12}".format(status) + "{:30}".format(reason) + "{:4.1f}".format(runtime)
+        stat_summary[mass] = "{:10}".format(status) + "{:28}".format(reason) + "{:4.1f}".format(runtime) + "{:12d}".format(eep_len)
 
     keys = stat_summary.keys()
     #Sort by mass in ascending order
@@ -128,7 +139,7 @@ def gen_summary(rawdirname):
     #Write to a file
     summary_filename = "tracks_summary_"+rawdirname.split("_raw")[0]+".txt"
     f = csv.writer(open(summary_filename, 'w'), delimiter='\t')
-    f.writerow(["{:6}".format('# Mass'), "{:12}".format('Status') + "{:30}".format('Reason') + "{:15}".format('Runtime (hr)')])
+    f.writerow(["{:6}".format('# Mass'), "{:10}".format('Status') + "{:25}".format('Reason') + "{:13}".format('Runtime (hr)') + "{:5}".format('EEP len')])
     f.writerow(['','','',''])
     
     for key in keys:

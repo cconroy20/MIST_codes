@@ -63,15 +63,6 @@ if __name__ == "__main__":
     reduce_jobs_utils.sort_histfiles(rawdirname)
     
     print "************************************************************"
-    print "****************GENERATING A SUMMARY FILE*******************"
-    print "************************************************************"
-    reduce_jobs_utils.gen_summary(rawdirname)
-    
-    #Copy the summary file
-    #print "mv tracks_summary_"+rawdirname.split("_raw")[0]+".txt" + newdirname
-    os.system("mv tracks_summary_"+rawdirname.split("_raw")[0]+".txt " + newdirname)
-    
-    print "************************************************************"
     print "****************SAVING THE ABUNDANCES FILE******************"
     print "************************************************************"
     abunfile = glob.glob(os.path.join(os.path.join(os.environ['MIST_GRID_DIR'],rawdirname),'*dir/input_initial_xa.data'))[0]
@@ -94,6 +85,12 @@ if __name__ == "__main__":
     print "************************************************************"
     make_eeps_isos.make_eeps_isos(runname, basic=False, fsps=True)
     
+    print "************************************************************"
+    print "****************GENERATING A SUMMARY FILE*******************"
+    print "************************************************************"
+    reduce_jobs_utils.gen_summary(rawdirname)
+    os.system("mv tracks_summary_"+rawdirname.split("_raw")[0]+".txt " + newdirname)
+
     print "************************************************************"
     print "****************MOVING TO LONG-TERM STORAGE*****************"
     print "************************************************************"
