@@ -90,6 +90,20 @@ contains
        TP_AGB_check=.true.
     endif
 
+    if(s% initial_mass <= 4.0d0) then 
+    !FULLER et al. TAYLER-SPRUIT
+       s% am_nu_ST_factor = 0.0d0
+       s% use_other_am_mixing = .true.
+       s% am_time_average = .true.
+       s% premix_omega = .true.
+       s% recalc_mixing_info_each_substep = .true.
+       s% am_nu_factor = 1.0d0
+       s% am_nu_non_rotation_factor = 1.0d0
+       s% am_nu_visc_factor = 0.333d0
+       s% angsml = 0.0d0
+    !FULLER et al. TAYLER-SPRUIT
+    endif
+
     !increase overshoot from 4 Msun up to the Brott et al. value at 8 Msun
     !s% overshoot_f_above_burn_h_core   = f_ov_fcn_of_mass(s% initial_mass)
     s% overshoot_f_above_burn_h_core   = 0.016_dp
