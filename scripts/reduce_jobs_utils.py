@@ -175,12 +175,15 @@ def sort_histfiles(rawdirname,merge_TPAGB=True):
         for histfile in listofhist:
             L1=False
             L2=False
+            date_check=False
+
             if 'M.data' in histfile:
                 file1=histfile
                 f1=open(file1,'r')
                 f1_data=f1.readlines()
                 f1.close()
                 L1=True
+                date1=datetime.strptime(f1_data[2].split()[4].strip('"'),'%Y%m%d')
 
                 file2=file1.strip('M.data')+'M_TPAGB.data'
                 if os.path.isfile(file2):
@@ -188,7 +191,11 @@ def sort_histfiles(rawdirname,merge_TPAGB=True):
                     f2_data=f2.readlines()
                     f2.close()
                     L2=True
-            if L1 and L2:
+                    date2=datetime.strptime(f2_data[2].split()[4].strip('"'),'%Y%m%d')
+
+                    date_check = date2 > date1
+
+            if L1 and L2 and date_check:
                 q=file1.index('.data')
                 file3=file1[0:q]+'_orig.data'
                 copyfile(file1,file3)
