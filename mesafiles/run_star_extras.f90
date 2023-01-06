@@ -470,7 +470,8 @@ contains
     min_center_h1_for_diff = 1d-10
     diff_test1 = abs(s% mass_conv_core - s% star_mass) < 1d-2 !fully convective
     diff_test2 = s% star_age > 1.0d11 !really old
-    diff_test3 = .false. !s% center_h1 < min_center_h1_for_diff !past the main sequence
+    !diff_test3 = .false. !s% center_h1 < min_center_h1_for_diff !past the main sequence
+    diff_test3 = s% center_h1 < min_center_h1_for_diff !past the main sequence
     if( diff_test1 .or. diff_test2 .or. diff_test3 )then
        s% diffusion_dt_limit = huge_dt_limit
     else

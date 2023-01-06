@@ -158,7 +158,8 @@
       mdot_omega_power = 0.0
 
       !DIFFUSION
-      do_element_diffusion = .true.
+      !do_element_diffusion = .true.
+      do_element_diffusion = .false.
       diffusion_dt_limit = 3.15d9 !seconds
       diffusion_min_T_at_surface = 1.0d3
       diffusion_min_dq_at_surface = 1.0d-3

@@ -10,6 +10,7 @@
 #SBATCH -o <<RUNNAME>>.o
 #SBATCH -e <<RUNNAME>>.e
 
+source $MESASDK_ROOT/bin/mesasdk_init.sh
 export OMP_NUM_THREADS=12
 cd <<DIRNAME>>
 echo "SLURM JOB ID: $SLURM_JOB_ID"

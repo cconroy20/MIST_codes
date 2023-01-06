@@ -89,7 +89,12 @@ def write_fsps_iso(file, logage=False):
     
     with open(fsps_iso_filename, 'w') as f: 
         for i in range(numrow):
-            row = [log_age[i], mini[i], mact[i], log_L[i], log_t[i], log_g[i], co_rat[i], phase[i], np.log10(abs(mdot[i]))]
+            if abs(mdot[i]) == 0.0:
+                lmdot = -99.0
+            else:
+                lmdot = np.log10(abs(mdot[i]))
+
+            row = [log_age[i], mini[i], mact[i], log_L[i], log_t[i], log_g[i], co_rat[i], phase[i], lmdot]
             fmt_row = fmt.format(*row)
             
             #Print column names every time the age changes

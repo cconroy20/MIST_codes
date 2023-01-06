@@ -9,7 +9,7 @@ source $MESASDK_ROOT/bin/mesasdk_init.sh
 dir=$1
 
 #get list of EEPs
-eepdir=$STORE_DIR/consistent/$dir/eeps/
+eepdir=$STORE_DIR/consistent_v2/$dir/eeps/
 tarr=(`ls $eepdir`)
 tlen=${#tarr[*]}
 
@@ -42,9 +42,7 @@ for j in `seq 1 $tlen`; do
     mm=$(echo "scale=2; ${mm}/100" | bc)
 
     #intermediate-mass models
-  #  if (( $(echo "$mm > 0.60 && $mm < 4.0" | bc) )); then
-    if (( $(echo "$mm >= 1.2 && $mm < 4.0" | bc) )); then
-  #  if (( $(echo "$mm >= 4.0 && $mm < 7.0" | bc) )); then
+    if (( $(echo "$mm > 0.60 && $mm < 7.0" | bc) )); then
 
         if [ $len -lt 1421 ]; then
 
@@ -55,7 +53,9 @@ for j in `seq 1 $tlen`; do
 	    #small mass perturbation
             mnew2=$(echo "scale=2; ${mm} + 0.01" | bc)
 
-	    ./submit_jobs.py   $feh   $afe    0.40    MIST2_49_li7.net     vvcrit0.4     CUSTOM  $mnew1,$mnew2
+	    #./submit_jobs.py   $feh   $afe    0.40    MIST2_49_li7.net     vvcrit0.4     CUSTOM  $mnew1,$mnew2
+
+	    ./submit_jobs.py   $feh   $afe    0.40    MIST2_49_li7.net     vvcrit0.4     CUSTOM  $mnew1
 
         fi
     fi
