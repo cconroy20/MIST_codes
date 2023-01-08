@@ -6,6 +6,9 @@
       !EOS
       eosDT_use_linear_interp_for_X = .false.
       eosDT_use_linear_interp_to_HELM = .false.
+      set_HELM_OPAL_Zs = .true.
+      Z_all_HELM = 0.10d0
+      Z_all_OPAL = 0.099d0
 
       !PMS
       create_pre_main_sequence_model = .true.
@@ -66,6 +69,8 @@
 
       use_gold_tolerances = .false.
       use_dedt_form_of_energy_eqn = .false.
+      Z_for_all_PTEH = 0.10d0
+      Z_for_any_PTEH = 0.099d0
       use_eosELM = .false.
       use_eosDT2 = .false.
 
