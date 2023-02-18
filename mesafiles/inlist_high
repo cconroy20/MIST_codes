@@ -69,8 +69,8 @@
 
       use_gold_tolerances = .false.
       use_dedt_form_of_energy_eqn = .false.
-      Z_for_all_PTEH = 0.10d0
-      Z_for_any_PTEH = 0.099d0
+      Z_for_all_PTEH = 0.20000001d0
+      Z_for_any_PTEH = 0.20000000d0
       use_eosELM = .false.
       use_eosDT2 = .false.
 
