@@ -92,9 +92,11 @@
 
       !WHEN TO STOP
       gamma_center_limit = 1.0d2
+      !log_L_upper_limit = 2.0
 
       !PHYSICS
-      which_atm_option = 'tau_10_tables'
+      which_atm_option = 'tau_100_tables'
+      !which_atm_option = 'simple_photosphere'
       mixing_length_alpha = 2.09d0
       mlt_option = 'Henyey'
       mlt_use_rotation_correction = .false.

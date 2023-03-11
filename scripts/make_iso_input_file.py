@@ -92,6 +92,7 @@ def make_iso_input_file(runname, mode, basic, incomplete=[]):
         fmt_abun_info, "#data directories: 1) history files, 2) eeps, 3) isochrones\n", tracks_dir+"\n", eeps_dir+"\n", iso_dir+"\n", \
         "# read history_columns\n", os.path.join(os.environ['ISO_DIR'], mhc_file)+"\n", "# specify tracks\n", str(len(tracks_list))+"\n"]
     footer = ["#specify isochrones\n", iso_file, "min_max\n", "log10\n", "107\n", "5.0\n", "10.3\n", "single\n"]
+    #footer = ["#specify isochrones\n", iso_file, "min_max\n", "log10\n", "201\n", "8.0\n", "10.0\n", "single\n"]
 
     #Write the file
     print "**************************************************************************"

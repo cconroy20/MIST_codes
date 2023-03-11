@@ -145,7 +145,7 @@ def gen_summary(rawdirname):
     for key in keys:
         f.writerow([" "+"{:.2f}".format(float(key)/100.), stat_summary[key]])
         
-def sort_histfiles(rawdirname,merge_TPAGB=True):
+def sort_histfiles(rawdirname,merge_TPAGB=False):
     
     """
 
