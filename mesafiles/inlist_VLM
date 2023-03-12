@@ -6,6 +6,9 @@
       !EOS
       eosDT_use_linear_interp_for_X = .false.
       eosDT_use_linear_interp_to_HELM = .false.
+      set_HELM_OPAL_Zs = .true.
+      Z_all_HELM = 0.10d0
+      Z_all_OPAL = 0.099d0
 
       !PMS
       create_pre_main_sequence_model = .true.
@@ -25,11 +28,14 @@
       file_for_uniform_xa = 'input_initial_xa.data'
       set_uniform_initial_xa_from_file = .true.
 
+      ! For now this primarily targets the EOS data structures.
+      num_steps_for_garbage_collection = -1
+
       show_kap_info = .true.
-      kappa_file_prefix = 'agss09_<<AFE>>'
-      kappa_lowT_prefix = 'lowT_fa05_agss09_<<AFE>>'
-      kappa_CO_prefix = 'agss09_<<AFE>>_co'
-      !kappa_config_file = 'kap_config_file.txt'
+      !opacities with AGSS09 abundances
+      kappa_file_prefix = 'gs98_<<AFE>>'
+      kappa_lowT_prefix = 'lowT_fa05_gs98_<<AFE>>'
+      kappa_CO_prefix = 'gs98_co'
 
       !use jina
       set_rates_preference = .true.
@@ -45,10 +51,15 @@
       PC_Gamma_start_crystal = 228.0d0
       PC_Gamma_full_crystal = 232.0d0
 
+
       extras_rpar(1) = 1.2d0 !lower mass limit for rotation transition
       extras_rpar(2) = 1.8d0 !upper mass limit for rotation transition
       extras_rpar(3) = <<ROT>>d0 !rotation new_omega_div_omega_crit
       extras_rpar(4) = <<FEH>>d0 ! [Fe/H]
+
+      extras_cpar(1) = '<<AFE>>'
+
+      extras_lpar(2) = .true.
 
 / ! end of star_job namelist
 
@@ -61,14 +72,16 @@
 
       use_gold_tolerances = .false.
       use_dedt_form_of_energy_eqn = .false.
+      Z_for_all_PTEH = 0.20000001d0
+      Z_for_any_PTEH = 0.20000000d0
       use_eosELM = .false.
-      use_eosDT2 = false.
+      use_eosDT2 = .false.
 
       !OUTPUT OPTIONS
       history_interval = 1
       terminal_interval = 100
       photo_digits = 5
-      photo_interval = 1000
+      photo_interval = 999999
 
       star_history_dbl_format = '(1pes32.16e3, 1x)'
       star_history_int_format = '(i32, 1x)'
@@ -78,56 +91,44 @@
       write_profiles_flag = .false.
 
       !WHEN TO STOP
-      xa_central_lower_limit_species(1) = 'h1'
-      xa_central_lower_limit(1) = 0.09d0
-
+      gamma_center_limit = 1.0d2
+      !log_L_upper_limit = 2.0
 
       !PHYSICS
-      which_atm_option = 'tau_10_tables'
-      mixing_length_alpha = 1.95d0
+      which_atm_option = 'tau_100_tables'
+      mixing_length_alpha = 2.09d0
       mlt_option = 'Henyey'
       mlt_use_rotation_correction = .false.
       okay_to_reduce_gradT_excess = .true.
       Pextra_factor = 2.0d0
 
+      alpha_semiconvection = 0.1
       use_Ledoux_criterion = .true.
       Thermohaline_option = 'Kippenhahn'
       Thermohaline_coeff = 26.318945069571622d0 !(8/3)*pi^2*alpha^2 where alpha==1.0 from Charbonnel & Zahn (2007)
 
+
       !CONVECTION + MIXING
-      do_conv_premix = .true.
+      do_conv_premix = .false.
       conv_premix_avoid_increase = .true.
 
-      !H core overshoot calibrated to M67
       overshoot_f_above_nonburn_core = 0.016d0
-      overshoot_f_above_burn_h_core  = 0.016d0
       overshoot_f_above_burn_he_core = 0.016d0
       overshoot_f_above_burn_z_core  = 0.016d0
       overshoot_f0_above_nonburn_core = 0.008d0
-      overshoot_f0_above_burn_h_core  = 0.008d0
       overshoot_f0_above_burn_he_core = 0.008d0
       overshoot_f0_above_burn_z_core  = 0.008d0
 
-      !envelope overshoot calibrated to the sun
       overshoot_f_above_nonburn_shell = 0.016d0
-      overshoot_f_below_nonburn_shell = 0.016d0
       overshoot_f_above_burn_h_shell  = 0.016d0
       overshoot_f_below_burn_h_shell  = 0.016d0
-      overshoot_f_above_burn_he_shell = 0.016d0
-      overshoot_f_below_burn_he_shell = 0.016d0
       overshoot_f_above_burn_z_shell  = 0.016d0
       overshoot_f_below_burn_z_shell  = 0.016d0
       overshoot_f0_above_nonburn_shell = 0.008d0
-      overshoot_f0_below_nonburn_shell = 0.008d0
       overshoot_f0_above_burn_h_shell  = 0.008d0
       overshoot_f0_below_burn_h_shell  = 0.008d0
-      overshoot_f0_above_burn_he_shell = 0.008d0
-      overshoot_f0_below_burn_he_shell = 0.008d0
       overshoot_f0_below_burn_z_shell  = 0.008d0
       overshoot_f0_above_burn_z_shell  = 0.008d0
-
-      !enhance `overshoot_f_below_nonburn_shell` by this factor during 3DUP in TPAGB
-      overshoot_below_noburn_shell_factor = 1.0d1
 
       !CO enhanced opacities
       use_Type2_opacities = .true.
@@ -147,7 +148,7 @@
       D_ES_factor =  1.0d0
       D_GSF_factor = 1.0d0
       D_DSI_factor = 1.0d0
-      D_ST_factor = 0.0d0
+      D_ST_factor  = 0.0d0
 
       am_D_mix_factor = 0.033d0
       am_gradmu_factor = 0.05d0
@@ -161,7 +162,6 @@
       Reimers_scaling_factor = 0.1d0
       Blocker_scaling_factor = 0.2d0
       RGB_to_AGB_wind_switch = 1d-2
-      max_wind = 1.0d-3
 
       !DIFFUSION
       do_element_diffusion = .true.
@@ -180,9 +180,13 @@
       c_core_boundary_he4_fraction = 1d-4
       o_core_boundary_c12_fraction = 1d-4
 
+
+
+
 ! mass resolution
        max_dq = 0.005      ! minimum number of cells = 1/max_dq
        mesh_delta_coeff = 1.0
+       varcontrol_target = 1.0d-3
        max_allowed_nz = 400000
 
 
@@ -192,10 +196,8 @@
 
 
       ! limit for magnitude of max change
-      delta_lgTeff_limit = 0.005d0
-      delta_lgTeff_hard_limit = 0.01d0
-      delta_lgL_limit = 0.02d0
-      delta_lgL_hard_limit = 0.05d0
+      delta_lgTeff_limit = 0.005d0     ! default 0.01
+      delta_lgL_limit = 0.02d0         ! default 0.10
 
 
      delta_lgRho_cntr_limit = 0.025   ! default 0.05
@@ -207,33 +209,33 @@
 
 
 ! time step resolution on fuel depletion
+      dX_limit_min_X = 0.1d0
+      dX_limit = 0.01d0
 
-      delta_lg_XH_cntr_limit = 0.01d0
-      delta_lg_XH_cntr_max   = 0.0d0
+
+      delta_lg_XH_cntr_limit = 0.02d0
+      delta_lg_XH_cntr_max   = -1.0d0
       delta_lg_XH_cntr_min   = -4.0d0
-      delta_lg_XH_cntr_hard_limit = 0.02d0
 
-      delta_lg_XHe_cntr_limit = 0.01d0
-      delta_lg_XHe_cntr_max   = 0.0d0
+      delta_lg_XHe_cntr_limit = 0.02d0
+      delta_lg_XHe_cntr_max   = -1.0d0
       delta_lg_XHe_cntr_min   = -4.0d0
-      delta_lg_XHe_cntr_hard_limit = 0.02d0
 
-      delta_lg_XC_cntr_limit = 0.01d0
-      delta_lg_XC_cntr_max   = 0.0d0
+      delta_lg_XC_cntr_limit = 0.02d0
+      delta_lg_XC_cntr_max   = -1.0d0
       delta_lg_XC_cntr_min   = -2.0d0 ! -3.0d0
-      delta_lg_XC_cntr_hard_limit = 0.02d0
 
-      delta_lg_XO_cntr_limit = 0.01d0
-      delta_lg_XO_cntr_max   = 0.0d0
+      delta_lg_XO_cntr_limit = 0.02d0
+      delta_lg_XO_cntr_max   = -1.0d0
       delta_lg_XO_cntr_min   = -3.0d0
       delta_lg_XO_cntr_hard_limit = 0.02d0
 
 
 ! limit the abundance changes in a timestep
-      dX_nuc_drop_limit = 2.0d-3        !  1.0d-4  default = 5.0d-2
-      dX_nuc_drop_limit_at_high_T = -1  ! default = -1 = same as dX_nuc_drop_limit
-      dX_nuc_drop_min_X_limit = 1.0d-3  ! 1.0d-3  default = 1.0d-4
-      dX_nuc_drop_max_A_limit = 52
+!      dX_nuc_drop_limit = 2.0d-3        !  1.0d-4  default = 5.0d-2
+!      dX_nuc_drop_limit_at_high_T = -1  ! default = -1 = same as dX_nuc_drop_limit
+!      dX_nuc_drop_min_X_limit = 1.0d-3  ! 1.0d-3  default = 1.0d-4
+!      dX_nuc_drop_max_A_limit = 52
 
 
 ! limit changes in the timestep
@@ -241,4 +243,5 @@
      max_timestep_factor         = 1.05d0
      timestep_factor_for_retries = 0.75
 
-/ ! end of controls namelist
+/
+
