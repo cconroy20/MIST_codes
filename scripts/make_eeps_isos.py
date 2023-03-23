@@ -44,17 +44,67 @@ def make_eeps_isos(runname, basic=False, fsps=False):
     os.chdir(os.environ['ISO_DIR'])
     os.system("./make_eep " + inputfile)
 
-    #Loop through the low and high masses and blend the tracks
- #   initial_eeps_list_fullname = glob.glob(os.path.join(os.environ['MIST_GRID_DIR'], runname+"/eeps/*.eep"))
- #   initial_eeps_list = [x.split('eeps/')[1] for x in initial_eeps_list_fullname]
- #   blend_ind = ['M_' in x for x in initial_eeps_list]
- #   blend_list = [x for x, y in zip(initial_eeps_list, blend_ind) if y]
- #   blend_list.sort()
- #   for i, filename in enumerate(blend_list[::2]):
- #       os.chdir(os.environ['MIST_CODE_DIR'])
- #       make_blend_input_file.make_blend_input_file(runname_format, filename, blend_list[i*2+1])
- #       os.chdir(os.environ['ISO_DIR'])
- #       os.system("./blend_eeps input.blend_"+ runname_format)
+    #Loop through the low masses (0.50, 0.55, 0.60) and blend the tracks
+
+    eeps_dir = os.path.join(os.path.join(os.environ['MIST_GRID_DIR'], runname), "eeps")
+
+    #Write out the contents of the file
+    content = ["#data directory\n", eeps_dir+"\n", "#number of tracks to blend\n", "2\n", \
+               "#names of those tracks; if .eep doesn't exist, then will create them\n", "00050M.track\n", \
+               "00050M_VLM.track\n", "#blend fractions, must sum to 1.0\n", "0.25\n", \
+               "0.75\n", "#name of blended track\n", "00050M.track.eep"]
+
+    os.chdir(os.environ['ISO_DIR'])
+
+    with open("input.blend1", "w") as newinputfile:
+        for contentline in content:
+            newinputfile.write(contentline)
+
+    os.system("./blend_eeps input.blend1")
+
+
+    #Write out the contents of the file
+    content = ["#data directory\n", eeps_dir+"\n", "#number of tracks to blend\n", "2\n", \
+               "#names of those tracks; if .eep doesn't exist, then will create them\n", "00055M.track\n", \
+               "00055M_VLM.track\n", "#blend fractions, must sum to 1.0\n", "0.50\n", \
+               "0.50\n", "#name of blended track\n", "00055M.track.eep"]
+
+    os.chdir(os.environ['ISO_DIR'])
+
+    with open("input.blend1", "w") as newinputfile:
+        for contentline in content:
+            newinputfile.write(contentline)
+
+    os.system("./blend_eeps input.blend1")
+
+    #Write out the contents of the file
+    content = ["#data directory\n", eeps_dir+"\n", "#number of tracks to blend\n", "2\n", \
+               "#names of those tracks; if .eep doesn't exist, then will create them\n", "00060M.track\n", \
+               "00060M_VLM.track\n", "#blend fractions, must sum to 1.0\n", "0.75\n", \
+               "0.25\n", "#name of blended track\n", "00060M.track.eep"]
+
+    os.chdir(os.environ['ISO_DIR'])
+
+    with open("input.blend1", "w") as newinputfile:
+        for contentline in content:
+            newinputfile.write(contentline)
+
+    os.system("./blend_eeps input.blend1")
+
+    #remove unneeded EEP files
+    os.chdir(eeps_dir)
+    os.remove('00050M_VLM.track.eep')
+    os.remove('00055M_VLM.track.eep')
+    os.remove('00060M_VLM.track.eep')
+
+    #and rename the other VLM files for isochrone processing
+    files=['00010M_VLM.track.eep', '00015M_VLM.track.eep', '00020M_VLM.track.eep', '00025M_VLM.track.eep', '00030M_VLM.track.eep', 
+           '00035M_VLM.track.eep', '00040M_VLM.track.eep', '00045M_VLM.track.eep']
+    for f in files:
+        g=f.replace('_VLM','')
+        print(f+' -> '+g)
+        os.rename(f,g)
+
             
     #Make the input file for the isochrones code to make isochrones
     os.chdir(os.environ['MIST_CODE_DIR'])

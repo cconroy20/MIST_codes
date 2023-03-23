@@ -36,8 +36,10 @@ def gen_summary(rawdirname):
         status = ''
 
         #Extract the mass of the model
- #       if 'M_dir' in file:
-        mass = file.split("/")[-2].rstrip('M_dir/')
+        if 'M_VLM_dir' in file:
+            mass = file.split("/")[-2].rstrip('M_VLM_dir/')
+        elif 'M_dir' in file:
+            mass = file.split("/")[-2].rstrip('M_dir/')
  #       else:
  #           mass = file.split("/")[-2].split('M_')[0] + '_' + file.split("/")[-2].split('M_')[1].rstrip('_dir')
 
@@ -47,7 +49,13 @@ def gen_summary(rawdirname):
             outcontent = outfile.readlines()
 
         ff = os.path.join(os.environ['MIST_GRID_DIR'],rawdirname.split("_raw")[0]) + '/eeps/'+mass+'M.track.eep'
-        fp = open(ff, "r")
+        try:
+            ff = os.path.join(os.environ['MIST_GRID_DIR'],rawdirname.split("_raw")[0]) + '/eeps/'+mass+'M.track.eep'
+            fp = open(ff, "r")
+        except IOError:
+            ff = os.path.join(os.environ['MIST_GRID_DIR'],rawdirname.split("_raw")[0]) + '/eeps/'+mass+'M_VLM.track.eep'
+            fp = open(ff, "r")
+
         eep_len = len(fp.readlines())
 
         status = 'FAILED'
@@ -161,6 +169,7 @@ def sort_histfiles(rawdirname,merge_TPAGB=False):
 
     """
 
+    blend_VLM = True
 
     #Get the list of history files (tracks)
     listofhist = glob.glob(os.path.join(os.environ['MIST_GRID_DIR'], os.path.join(rawdirname+'/*/LOGS/*.data')))
@@ -169,6 +178,8 @@ def sort_histfiles(rawdirname,merge_TPAGB=False):
     new_parentdirname = rawdirname.split("_raw")[0]
     histfiles_dirname = os.path.join(os.path.join(os.environ['MIST_GRID_DIR'], new_parentdirname + "/tracks"))
     os.mkdir(histfiles_dirname)
+
+    #if blend_VLM
 
     #Merge TP-AGB rerun if it exists
     if merge_TPAGB:
@@ -227,7 +238,14 @@ def sort_histfiles(rawdirname,merge_TPAGB=False):
     #Trim repeated model numbers, then rename & copy the history files over
     for histfile in listofhist:
         print 'processing', histfile
-        if 'M.data' in histfile:
+        if 'M_VLM.data' in histfile:
+            unformat_mass_string = histfile.split('LOGS/')[1].split('M_VLM.data')[0]
+            newhistfilename = histfile.split('LOGS')[0]+'LOGS/'+reformat_massname.reformat_massname(unformat_mass_string)+'M_VLM.track'
+            os.system("cp " + histfile + " " + newhistfilename)
+            mesa_hist_trim.trim_file(newhistfilename)
+            os.system("mv " + newhistfilename + " " + histfiles_dirname)
+
+        elif 'M.data' in histfile:
             unformat_mass_string = histfile.split('LOGS/')[1].split('M.data')[0]
             newhistfilename = histfile.split('LOGS')[0]+'LOGS/'+reformat_massname.reformat_massname(unformat_mass_string)+'M.track'
        # else:
