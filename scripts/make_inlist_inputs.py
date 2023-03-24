@@ -67,7 +67,7 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net, gridtype="D
     if (startype == 'VeryLow'):
         massindex = np.where(bigmassgrid <= 0.6)
     elif (startype == 'Intermediate'):
-        massindex = np.where((bigmassgrid < 7.0) & (bigmassgrid > 0.6))
+        massindex = np.where((bigmassgrid < 7.0) & (bigmassgrid > 0.499))
     elif (startype == 'VeryHigh'):
         massindex = np.where(bigmassgrid >= 7.0)
     else:
