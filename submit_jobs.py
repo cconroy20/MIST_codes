@@ -99,6 +99,7 @@ if __name__ == "__main__":
     #Generate inlists using template inlist files
     tempstor_inlist_dir = os.path.join(os.environ['MESAWORK_DIR'], 'inlists/inlists_'+'_'.join(runname.split('/')))
     new_inlist_name = '<<MASS>>M.inlist'
+    new_inlist_name_VLM = '<<MASS>>M_VLM.inlist'
     path_to_inlist_lowinter = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_lowinter')
     path_to_inlist_VLM = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_VLM')
     path_to_inlist_high = os.path.join(os.environ['MIST_CODE_DIR'],'mesafiles/inlist_high')
@@ -127,7 +128,7 @@ if __name__ == "__main__":
 
     #Make the substitutions in the template inlists
     make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryLow', FeH, afe_fmt, zbase, vvcrit, net_name, gridtype, customgrid),\
-        new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_VLM)
+        new_inlist_name_VLM, direc=tempstor_inlist_dir, file_base=path_to_inlist_VLM)
     make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'Intermediate', FeH, afe_fmt, zbase, vvcrit, net_name, gridtype, customgrid),\
         new_inlist_name, direc=tempstor_inlist_dir, file_base=path_to_inlist_lowinter)
     make_replacements.make_replacements(make_inlist_inputs.make_inlist_inputs(runname, 'VeryHigh', FeH, afe_fmt, zbase, vvcrit, net_name, gridtype, customgrid),\
