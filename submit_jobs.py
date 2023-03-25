@@ -139,10 +139,7 @@ if __name__ == "__main__":
 
     for inlistname in inlist_list:
         #Make individual directories for each mass
-        if 'VLM' in inlistname:
-            onemassdir = inlistname.replace('.inlist', '_VLM_dir')
-        else:
-            onemassdir = inlistname.replace('.inlist', '_dir')
+        onemassdir = inlistname.replace('.inlist', '_dir')
 
         #Define an absolute path to this directory.
         path_to_onemassdir = os.path.join(dirname, onemassdir)
