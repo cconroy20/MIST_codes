@@ -86,7 +86,7 @@
       star_history_dbl_format = '(1pes32.16e3, 1x)'
       star_history_int_format = '(i32, 1x)'
       star_history_txt_format = '(a32, 1x)'
-      star_history_name = '<<MASS>>M.data'
+      star_history_name = '<<MASS>>M_VLM.data'
 
       write_profiles_flag = .false.
 
