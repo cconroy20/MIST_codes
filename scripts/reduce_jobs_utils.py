@@ -48,97 +48,104 @@ def gen_summary(rawdirname):
         with open(listoutfiles[index], 'r') as outfile:
             outcontent = outfile.readlines()
 
+        keep_going = True
         ff = os.path.join(os.environ['MIST_GRID_DIR'],rawdirname.split("_raw")[0]) + '/eeps/'+mass+'M.track.eep'
         try:
-            ff = os.path.join(os.environ['MIST_GRID_DIR'],rawdirname.split("_raw")[0]) + '/eeps/'+mass+'M.track.eep'
             fp = open(ff, "r")
         except IOError:
             ff = os.path.join(os.environ['MIST_GRID_DIR'],rawdirname.split("_raw")[0]) + '/eeps/'+mass+'M_VLM.track.eep'
-            fp = open(ff, "r")
+            try:
+                fp = open(ff, "r")
+            except IOError:
+                keep_going = False
+                status = "FAILED"
+                termination_reason = " "
+                reason = "not found"
 
-        eep_len = len(fp.readlines())
+        if keep_going:
+            eep_len = len(fp.readlines())
 
-        status = 'FAILED'
-        termination_reason = ''
-        reason = '-- unknown --'
-
-        #Retrieve the stopping reasons
-        for line in outcontent[-500:]:
-            if 'termination code' in line:
-                termination_reason = line.split('termination code: ')[1].split('\n')[0]
-                reason = termination_reason.replace(' ', '_')
-                if reason == 'min_timestep_limit':
-                    status = 'FAILED'
-                else:
-                    status = 'OK'
-            if 'failed in do_relax_num_steps' in line:
-                termination_reason = 'failed_during_preMS'
-                reason = termination_reason.replace(' ', '_')
-                status = 'FAILED'
-        
-        if reason == 'central_C12_mass_fraction_below_1e-2':
-            reason = 'stopping_at_cenC12_limit'
-
-        if reason == 'central_H1_mass_fraction_below_0.01':
-            reason = 'stopping_at_cenH1_limit'
-
-        if reason == 'logQ_min_limit':
             status = 'FAILED'
+            termination_reason = ''
+            reason = '-- unknown --'
 
-        if status != 'OK':
-            if (len(errcontent) > 0):
-                for line in errcontent:
-                    if 'DUE TO TIME LIMIT' in line:
-                        reason = 'hit time limit'
-            for line in outcontent:
-                if 'now at TP-AGB phase' in line:
-                    reason = '@ TP-AGB phase'
-                if 'now at late AGB phase' in line:
-                    reason = '@ late-AGB phase'
-                if 'now at post AGB phase' in line:
-                    #reason = '@ post-AGB phase'
-                    reason = 'stopping_at_post_AGB'
-                    status = 'OK'
-                if 'now at WD phase' in line:
-                    #reason = '@ WD phase'
-                    reason = 'stopping_at_post_AGB'
-                    status = 'OK'
-              #  for line in errcontent:
-              #      if 'DUE TO TIME LIMIT' in line:
-              #          reason = 'need_more_time'
-              #          break
-              #      elif 'exceeded memory limit' in line:
-              #          reason = 'memory_exceeded'
-              #          break
-              #      elif 'Socket timed out on send/recv operation' in line:
-              #          reason = 'socket_timed_out'
+            #Retrieve the stopping reasons
+            for line in outcontent[-500:]:
+                if 'termination code' in line:
+                    termination_reason = line.split('termination code: ')[1].split('\n')[0]
+                    reason = termination_reason.replace(' ', '_')
+                    if reason == 'min_timestep_limit':
+                        status = 'FAILED'
+                    else:
+                        status = 'OK'
+                if 'failed in do_relax_num_steps' in line:
+                    termination_reason = 'failed_during_preMS'
+                    reason = termination_reason.replace(' ', '_')
+                    status = 'FAILED'
 
-        if (float(mass)/100. < 7.0 and eep_len >= 1421):
-            status = 'OK'
-            reason = 'stopping_at_post_AGB'
-                        
-        if (float(mass)/100. >= 7.0 and eep_len >= 820):
-            status = 'OK'
-            reason = 'stopping_at_cenC12_limit'
+            if reason == 'central_C12_mass_fraction_below_1e-2':
+                reason = 'stopping_at_cenC12_limit'
 
-        # +DATE: %Y-%m-%d%nTIME: %H:%M:%S
-        #Retrieve the run time information
-        dates = subprocess.Popen('grep [0-9][0-9]:[0-9][0-9]:[0-9][0-9] ' + listoutfiles[index], shell=True, stdout=subprocess.PIPE)
-        try:
-            startdate, enddate = dates.stdout
-            startdate_fmt = datetime.strptime(startdate.decode('ascii').rstrip('\n').strip('START: '), '%Y-%m-%d %H:%M:%S')
-            enddate_fmt = datetime.strptime(enddate.decode('ascii').rstrip('\n').strip('END: '), '%Y-%m-%d %H:%M:%S')
-            
-            delta_time = (enddate_fmt - startdate_fmt)
-            #Total run time in decimal hours
-            runtime = delta_time.total_seconds()/(3600.0)
-            
-        #If there is no end date
-        except ValueError:
-            runtime = -1.
-            
-        #Populate the stat_summary dictionary
-        stat_summary[mass] = "{:10}".format(status) + "{:28}".format(reason) + "{:4.1f}".format(runtime) + "{:12d}".format(eep_len)
+            if reason == 'central_H1_mass_fraction_below_0.01':
+                reason = 'stopping_at_cenH1_limit'
+
+            if reason == 'logQ_min_limit':
+                status = 'FAILED'
+
+            if status != 'OK':
+                if (len(errcontent) > 0):
+                    for line in errcontent:
+                        if 'DUE TO TIME LIMIT' in line:
+                            reason = 'hit time limit'
+                for line in outcontent:
+                    if 'now at TP-AGB phase' in line:
+                        reason = '@ TP-AGB phase'
+                    if 'now at late AGB phase' in line:
+                        reason = '@ late-AGB phase'
+                    if 'now at post AGB phase' in line:
+                        #reason = '@ post-AGB phase'
+                        reason = 'stopping_at_post_AGB'
+                        status = 'OK'
+                    if 'now at WD phase' in line:
+                        #reason = '@ WD phase'
+                        reason = 'stopping_at_post_AGB'
+                        status = 'OK'
+                  #  for line in errcontent:
+                  #      if 'DUE TO TIME LIMIT' in line:
+                  #          reason = 'need_more_time'
+                  #          break
+                  #      elif 'exceeded memory limit' in line:
+                  #          reason = 'memory_exceeded'
+                  #          break
+                  #      elif 'Socket timed out on send/recv operation' in line:
+                  #          reason = 'socket_timed_out'
+
+            if (float(mass)/100. < 7.0 and eep_len >= 1421):
+                status = 'OK'
+                reason = 'stopping_at_post_AGB'
+
+            if (float(mass)/100. >= 7.0 and eep_len >= 820):
+                status = 'OK'
+                reason = 'stopping_at_cenC12_limit'
+
+            # +DATE: %Y-%m-%d%nTIME: %H:%M:%S
+            #Retrieve the run time information
+            dates = subprocess.Popen('grep [0-9][0-9]:[0-9][0-9]:[0-9][0-9] ' + listoutfiles[index], shell=True, stdout=subprocess.PIPE)
+            try:
+                startdate, enddate = dates.stdout
+                startdate_fmt = datetime.strptime(startdate.decode('ascii').rstrip('\n').strip('START: '), '%Y-%m-%d %H:%M:%S')
+                enddate_fmt = datetime.strptime(enddate.decode('ascii').rstrip('\n').strip('END: '), '%Y-%m-%d %H:%M:%S')
+
+                delta_time = (enddate_fmt - startdate_fmt)
+                #Total run time in decimal hours
+                runtime = delta_time.total_seconds()/(3600.0)
+
+            #If there is no end date
+            except ValueError:
+                runtime = -1.
+
+            #Populate the stat_summary dictionary
+            stat_summary[mass] = "{:10}".format(status) + "{:28}".format(reason) + "{:4.1f}".format(runtime) + "{:12d}".format(eep_len)
 
     keys = stat_summary.keys()
     #Sort by mass in ascending order
