@@ -232,7 +232,6 @@ def sort_histfiles(rawdirname,merge_TPAGB=False):
 
                 f3.close()
                 move(tmpfile,file1)
-                #os.rename(tmpfile,file1)
 
 
     #Trim repeated model numbers, then rename & copy the history files over
@@ -248,10 +247,6 @@ def sort_histfiles(rawdirname,merge_TPAGB=False):
         elif 'M.data' in histfile:
             unformat_mass_string = histfile.split('LOGS/')[1].split('M.data')[0]
             newhistfilename = histfile.split('LOGS')[0]+'LOGS/'+reformat_massname.reformat_massname(unformat_mass_string)+'M.track'
-       # else:
-       #     unformat_mass_string = histfile.split('LOGS/')[1].split('.data')[0].split('M_')[0]
-       #     bc_name = histfile.split('LOGS/')[1].split('M')[1].split('.data')[0]
-       #     newhistfilename = histfile.split('LOGS')[0]+'LOGS/'+reformat_massname.reformat_massname(unformat_mass_string)+'M_' + bc_name + '.track'
             os.system("cp " + histfile + " " + newhistfilename)
             mesa_hist_trim.trim_file(newhistfilename)
             os.system("mv " + newhistfilename + " " + histfiles_dirname)

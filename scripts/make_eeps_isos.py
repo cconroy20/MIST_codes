@@ -101,9 +101,10 @@ def make_eeps_isos(runname, basic=False, fsps=False):
     files=['00010M_VLM.track.eep', '00015M_VLM.track.eep', '00020M_VLM.track.eep', '00025M_VLM.track.eep', '00030M_VLM.track.eep', 
            '00035M_VLM.track.eep', '00040M_VLM.track.eep', '00045M_VLM.track.eep']
     for f in files:
-        g=f.replace('_VLM','')
-        print(f+' -> '+g)
-        os.rename(f,g)
+        if os.path.isfile(f):
+            g=f.replace('_VLM','')
+            print(f+' -> '+g)
+            os.rename(f,g)
 
             
     #Make the input file for the isochrones code to make isochrones
