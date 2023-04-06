@@ -21,6 +21,7 @@ import os
 import sys
 import subprocess
 import glob
+from shutil import copytree
 
 #from scripts import mesa_plot_grid
 from scripts import make_eeps_isos
@@ -100,5 +101,4 @@ if __name__ == "__main__":
     print "************************************************************"
     print "****************MOVING TO LONG-TERM STORAGE*****************"
     print "************************************************************"
-    os.system("mv " + os.path.join(os.environ['MIST_GRID_DIR'],runname) + " " + os.path.join(os.environ['STORE_DIR'],runname))
-
+    copytree(src=os.path.join(os.environ['MIST_GRID_DIR'],runname), dst=os.environ['STORE_DIR'], dirs_exist_ok=True)
