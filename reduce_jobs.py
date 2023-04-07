@@ -101,4 +101,9 @@ if __name__ == "__main__":
     print "************************************************************"
     print "****************MOVING TO LONG-TERM STORAGE*****************"
     print "************************************************************"
-    copytree(src=os.path.join(os.environ['MIST_GRID_DIR'],runname), dst=os.path.join(os.environ['STORE_DIR'],runname), dir_exists_ok=True)
+    old_dir = os.path.join(os.environ['MIST_GRID_DIR'],runname) 
+    new_dir = os.path.join(os.environ['STORE_DIR'],runname)
+    if os.path.isdir(new_dir):
+        os.system("rm -rf "+new_dir)
+    os.system("mv "+old_dir+" "+new_dir)
+
