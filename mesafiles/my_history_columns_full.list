@@ -41,24 +41,58 @@
               
    ! mass fractions near surface (averaged over the outer 1e−6% of the total stellar mass)
        
-      surface h1
-      surface he3
-      surface he4
-      surface li7
-      surface be9
-      surface c12
-      surface c13
-      surface n14
-      surface o16
-      surface f19
-      surface ne20
-      surface na23
-      surface mg24
-      surface si28
-      surface s32
-      surface ca40
-      surface ti48
-      surface fe56
+       surface h1  
+       surface h2  
+       surface he3 
+       surface he4
+       surface li7 
+       surface be7 
+       surface be9 
+       surface be10
+       surface b8  
+       surface c12 
+       surface c13 
+       surface n13 
+       surface n14 
+       surface n15 
+       surface o14 
+       surface o15 
+       surface o16 
+       surface o17 
+       surface o18 
+       surface f17 
+       surface f18 
+       surface f19 
+       surface ne18
+       surface ne19
+       surface ne20
+       surface ne21
+       surface ne22
+       surface na21
+       surface na22
+       surface na23
+       surface na24
+       surface mg23
+       surface mg24
+       surface mg25
+       surface mg26
+       surface al25
+       surface al26
+       surface al27
+       surface si27
+       surface si28
+       surface si29
+       surface si30
+       surface p30 
+       surface p31 
+       surface s31 
+       surface s32 
+       surface s33 
+       surface s34 
+       surface ca40
+       surface ti48
+       surface fe56
+
 
    ! conditions near center
 
@@ -70,15 +104,59 @@
       mass_conv_core ! mass of the convective core
         
    ! mass fractions near center (averaged over the inner 1e−6% of the total stellar mass)
-   
-      center h1
-      center he4
-      center c12
-      center n14
-      center o16
-      center ne20
-      center mg24
-      center si28
+
+       center h1  
+       center h2  
+       center he3 
+       center he4
+       center li7 
+       center be7 
+       center be9 
+       center be10
+       center b8  
+       center c12 
+       center c13 
+       center n13 
+       center n14 
+       center n15 
+       center o14 
+       center o15 
+       center o16 
+       center o17 
+       center o18 
+       center f17 
+       center f18 
+       center f19 
+       center ne18
+       center ne19
+       center ne20
+       center ne21
+       center ne22
+       center na21
+       center na22
+       center na23
+       center na24
+       center mg23
+       center mg24
+       center mg25
+       center mg26
+       center al25
+       center al26
+       center al27
+       center si27
+       center si28
+       center si29
+       center si30
+       center p30 
+       center p31 
+       center s31 
+       center s32 
+       center s33 
+       center s34 
+       center ca40
+       center ti48
+       center fe56
+
  
     ! log10 total luminosity for reaction categories (Lsun units)
       
