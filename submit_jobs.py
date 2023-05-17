@@ -144,36 +144,43 @@ if __name__ == "__main__":
         #Define an absolute path to this directory.
         path_to_onemassdir = os.path.join(dirname, onemassdir)
         
-        #delete directory, if it exists
-        if os.path.exists(path_to_onemassdir):
+        #check directory to see if it exists
+        if os.path.isdir(path_to_onemassdir):
+            
+            #if it does, then check to see if LOGS directory is present
+            LOGS_dir = os.path.join(path_to_onemassdir, "LOGS")
+            
+            if len(os.listdir(LOGS_dir))>0:
+                continue
+
             shutil.rmtree(path_to_onemassdir)
+            
+            #Copy over the contents of the template directory
+            shutil.copytree(os.path.join(os.environ['MESAWORK_DIR'], "cleanworkdir"), path_to_onemassdir)
 
-        #Copy over the contents of the template directory
-        shutil.copytree(os.path.join(os.environ['MESAWORK_DIR'], "cleanworkdir"), path_to_onemassdir)
+            #Populate each directory with appropriate inlists and rename as inlist_project
+            shutil.copy(os.path.join(tempstor_inlist_dir,inlistname), os.path.join(path_to_onemassdir, 'inlist_project'))
+                
+            #Populate each directory with the most recent my_history columns and profile columns
+            shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/my_history_columns.list'),\
+                        os.path.join(path_to_onemassdir, 'my_history_columns.list'))
+            shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/run_star_extras.f90'),\
+                        os.path.join(path_to_onemassdir, 'src/run_star_extras.f90'))
 
-        #Populate each directory with appropriate inlists and rename as inlist_project
-        shutil.copy(os.path.join(tempstor_inlist_dir,inlistname), os.path.join(path_to_onemassdir, 'inlist_project'))
-        
-        #Populate each directory with the most recent my_history columns and profile columns
-        shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/my_history_columns.list'),\
-                os.path.join(path_to_onemassdir, 'my_history_columns.list'))
-        shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/run_star_extras.f90'),\
-                os.path.join(path_to_onemassdir, 'src/run_star_extras.f90'))
-
-        #Populate each directory with the input abundance file named input_initial_xa.data and input_XYZ
-        shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'input_initial_xa.data'), path_to_onemassdir)
-        shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'input_XYZ'), path_to_onemassdir)
-
-        #Create and move the SLURM file to the correct directory
-        runbasefile = os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/SLURM_MISTgrid.sh')
-        slurmfile = make_slurm_sh.make_slurm_sh(inlistname, path_to_onemassdir, runbasefile, name(FeH,aFe))
-        shutil.move(slurmfile, path_to_onemassdir)
-        
-        #cd into the individual directory and submit the job
-        os.chdir(path_to_onemassdir)
-        print "sbatch " + slurmfile
-        os.system("sbatch "+slurmfile)
-        os.chdir(os.environ['MIST_CODE_DIR'])
+            #Populate each directory with the input abundance file named input_initial_xa.data and input_XYZ
+            shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'input_initial_xa.data'), path_to_onemassdir)
+            shutil.copy(os.path.join(os.environ['MIST_CODE_DIR'], 'input_XYZ'), path_to_onemassdir)
+            
+            #Create and move the SLURM file to the correct directory
+            runbasefile = os.path.join(os.environ['MIST_CODE_DIR'], 'mesafiles/SLURM_MISTgrid.sh')
+            slurmfile = make_slurm_sh.make_slurm_sh(inlistname, path_to_onemassdir, runbasefile, name(FeH,aFe))
+            shutil.move(slurmfile, path_to_onemassdir)
+                
+            #cd into the individual directory and submit the job
+            os.chdir(path_to_onemassdir)
+            print "sbatch " + slurmfile
+            os.system("sbatch "+slurmfile)
+            os.chdir(os.environ['MIST_CODE_DIR'])
     
     #Clean up
     os.remove(os.path.join(os.environ['MIST_CODE_DIR'], 'input_initial_xa.data'))
