@@ -154,7 +154,7 @@ if __name__ == "__main__":
             files=os.listdir(LOGS_dir)
             if len(files)>0:
                 for item in files:
-                    if 'M.data' in item:
+                    if item.endswith('data'):
                         check=True
                         break
 
