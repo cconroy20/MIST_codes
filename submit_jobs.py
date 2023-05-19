@@ -150,7 +150,15 @@ if __name__ == "__main__":
             #if it does, then check to see if LOGS directory is present
             LOGS_dir = os.path.join(path_to_onemassdir, "LOGS")
             
-            if len(os.listdir(LOGS_dir))>0:
+            check=False
+            files=os.listdir(LOGS_dir)
+            if len(files)>0:
+                for item in files:
+                    if 'M.data' in item:
+                        check=True
+                        break
+
+            if check: #this skips to the next mass
                 continue
 
             shutil.rmtree(path_to_onemassdir)
