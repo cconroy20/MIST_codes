@@ -452,7 +452,7 @@ contains
 
     ! define STOPPING CRITERION: stopping criterion for C burning, massive stars.
     if ((s% center_h1 < 1d-4) .and. (s% center_he4 < 5.0d-2) .and. (s% center_c12 < 5.0d-2)) then
-       termination_code_str(t_xtra2) = 'central C12 mass fraction below 1e-2'
+       termination_code_str(t_xtra2) = 'central C12 mass fraction below 5e-2'
        s% termination_code = t_xtra2
        extras_finish_step = terminate
     endif

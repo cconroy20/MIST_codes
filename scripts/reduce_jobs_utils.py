@@ -181,6 +181,8 @@ def sort_histfiles(rawdirname,merge_TPAGB=False):
     #Get the list of history files (tracks)
     listofhist = glob.glob(os.path.join(os.environ['MIST_GRID_DIR'], os.path.join(rawdirname+'/*/LOGS/*.data')))
 
+    print len(listofhist)
+    
     #Make the track directory in the new reduced MESA run directory
     new_parentdirname = rawdirname.split("_raw")[0]
     histfiles_dirname = os.path.join(os.path.join(os.environ['MIST_GRID_DIR'], new_parentdirname + "/tracks"))

@@ -31,10 +31,11 @@ def trim_file(histfile):
         logTeff = arrdata['log_Teff']
         logL = arrdata['log_L']
         logLHe = arrdata['log_LHe']
-        
+
         pagbind_tmp = np.where((starmass-ccoremass)/starmass[0] < 0.15)[0]
+        
         if len(pagbind_tmp) > 0:
-            pagbind = np.where((logTeff > logTeff[logLHe[pagbind_tmp[0]]]+0.1) & ((starmass-ccoremass)/starmass[0] < 0.15))[0]
+            pagbind = np.where((logTeff > logTeff[pagbind_tmp[0]]+0.1) & ((starmass-ccoremass)/starmass[0] < 0.15))[0]
             if len(pagbind) > 0:
                 xx = starage[pagbind]-starage[pagbind][0]
                 yy = logL[pagbind]
