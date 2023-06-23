@@ -96,7 +96,7 @@
 
       !PHYSICS
       which_atm_option = 'tau_100_tables'
-      mixing_length_alpha = 2.09d0
+      mixing_length_alpha = 2.00d0
       mlt_option = 'Henyey'
       mlt_use_rotation_correction = .false.
       okay_to_reduce_gradT_excess = .true.

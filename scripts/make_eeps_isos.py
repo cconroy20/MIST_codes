@@ -21,11 +21,11 @@ import make_blend_input_file
 import make_iso_input_file
 
 def make_eeps_isos(runname, basic=False, fsps=False):
+
+    print runname
+    exit
     
-    #Path to the new organized directory
-    newdirname = os.path.join(os.environ['MIST_GRID_DIR'],runname)
-    
-    runname_format = '_'.join(runname.split('/'))
+    runname_format = runname.split('/')[-1]
     inputfile = "input."+runname_format
     
     #if basic = True, then only print out a very basic set of columns

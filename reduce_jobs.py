@@ -104,6 +104,10 @@ if __name__ == "__main__":
     old_dir = os.path.join(os.environ['MIST_GRID_DIR'],runname) 
     new_dir = os.path.join(os.environ['STORE_DIR'],runname)
     if os.path.isdir(new_dir):
+        print 'deleting old version of reduced directory'
         os.system("rm -rf "+new_dir)
     os.system("mv "+old_dir+" "+new_dir)
 
+    dir1 = os.path.join(os.environ['MIST_GRID_DIR'],runname)
+    dir2 = os.path.join(os.environ['MIST_GRID_DIR'],runname+"_raw")
+    os.system("mv "+dir2+" "+dir1)
