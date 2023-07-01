@@ -74,7 +74,7 @@ def make_inlist_inputs(runname, startype, feh, afe, zbase, rot, net, gridtype="D
         sys.exit(0)
 
     #Create mass lists
-    mapfunc = lambda var: np.str(int(var)) if var == int(var) else np.str(var)
+    mapfunc = lambda var: str(int(var)) if var == int(var) else '{:4.2f}'.format(var)
     masslist = map(mapfunc, bigmassgrid[massindex])
         
     #Create [a/Fe] lists
