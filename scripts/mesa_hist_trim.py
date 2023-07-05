@@ -24,7 +24,7 @@ def trim_file(histfile):
     
     #remove postAGB squiggles
     starmass = arrdata['star_mass']
-    if isscalar(starmass): 
+    if np.isscalar(starmass): 
         print("Not enough lines in file "+histfile)
         return
 
