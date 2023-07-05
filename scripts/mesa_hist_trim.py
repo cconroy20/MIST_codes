@@ -24,6 +24,10 @@ def trim_file(histfile):
     
     #remove postAGB squiggles
     starmass = arrdata['star_mass']
+    if isscalar(starmass): 
+        print("Not enough lines in file "+histfile)
+        return
+
     if ((starmass[0]<10.0) & (starmass[0]>0.6)):
         ccoremass = arrdata['c_core_mass']
         starage = arrdata['star_age']
@@ -40,8 +44,8 @@ def trim_file(histfile):
                 xx = starage[pagbind]-starage[pagbind][0]
                 yy = logL[pagbind]
                 zz = logTeff[pagbind]
-                deriv_logL = (yy[1:]-yy[:-1])/(xx[1:]-xx[:-1])
-                deriv_logTeff = (zz[1:]-zz[:-1])/(xx[1:]-xx[:-1])
+                deriv_logL = (yy[1:]-yy[:-1]+1.0e-8)/(xx[1:]-xx[:-1]+1.0e-8)
+                deriv_logTeff = (zz[1:]-zz[:-1]+1.0e-8)/(xx[1:]-xx[:-1]+1.0e-8)
                 badpagb = np.where((abs(deriv_logL) > 0.1)|(abs(deriv_logTeff) > 0.01))[0]
                 if len(badpagb > 0):
                     print 'Cutting out bad PAGB scribbles...'                    
