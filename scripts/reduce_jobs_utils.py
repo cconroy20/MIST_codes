@@ -186,8 +186,6 @@ def sort_histfiles(rawdirname,merge_TPAGB=False):
     histfiles_dirname = os.path.join(os.path.join(os.environ['MIST_GRID_DIR'], new_parentdirname + "/tracks"))
     os.mkdir(histfiles_dirname)
 
-    #if blend_VLM
-
     #Merge TP-AGB rerun if it exists
     if merge_TPAGB:
         for histfile in listofhist:
@@ -244,6 +242,12 @@ def sort_histfiles(rawdirname,merge_TPAGB=False):
     #Trim repeated model numbers, then rename & copy the history files over
     for histfile in listofhist:
         print 'processing', histfile
+
+        with open(histfile, 'r') as f:
+            if len(f.readlines()) < 100:
+                print histfile+' is short'
+                continue #skip to the next file in the list
+
         if 'M_VLM.data' in histfile:
             unformat_mass_string = histfile.split('LOGS/')[1].split('M_VLM.data')[0]
             newhistfilename = histfile.split('LOGS')[0]+'LOGS/'+reformat_massname.reformat_massname(unformat_mass_string)+'M_VLM.track'
