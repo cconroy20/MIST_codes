@@ -44,60 +44,59 @@ def make_eeps_isos(runname, basic=False, fsps=False):
     os.chdir(os.environ['ISO_DIR'])
     os.system("./make_eep " + inputfile)
 
-    #Loop through the low masses (0.50, 0.55, 0.60) and blend the tracks
+    #blend the tracks (0.50, 0.55, 0.60) if they exist
 
     eeps_dir = os.path.join(os.path.join(os.environ['MIST_GRID_DIR'], runname), "eeps")
 
-    #Write out the contents of the file
-    content = ["#data directory\n", eeps_dir+"\n", "#number of tracks to blend\n", "2\n", \
-               "#names of those tracks; if .eep doesn't exist, then will create them\n", "00050M.track\n", \
-               "00050M_VLM.track\n", "#blend fractions, must sum to 1.0\n", "0.25\n", \
-               "0.75\n", "#name of blended track\n", "00050M.track.eep"]
+    if os.path.isfile(eeps_dir+'/00050M_VLM.track.eep'):
+        #Write out the contents of the file
+        content = ["#data directory\n", eeps_dir+"\n", "#number of tracks to blend\n", "2\n", \
+                   "#names of those tracks; if .eep doesn't exist, then will create them\n", "00050M.track\n", \
+                   "00050M_VLM.track\n", "#blend fractions, must sum to 1.0\n", "0.25\n", \
+                   "0.75\n", "#name of blended track\n", "00050M.track.eep"]
 
-    os.chdir(os.environ['ISO_DIR'])
+        with open("input.blend1", "w") as newinputfile:
+            for contentline in content:
+                newinputfile.write(contentline)
 
-    with open("input.blend1", "w") as newinputfile:
-        for contentline in content:
-            newinputfile.write(contentline)
+        result = os.system("./blend_eeps input.blend1")
+        if result==0: os.remove(eeps_dir+'/00050M_VLM.track.eep')
 
-    os.system("./blend_eeps input.blend1")
+    if os.path.isfile(eeps_dir+'/00055M_VLM.track.eep'):
+        #Write out the contents of the file
+        content = ["#data directory\n", eeps_dir+"\n", "#number of tracks to blend\n", "2\n", \
+                   "#names of those tracks; if .eep doesn't exist, then will create them\n", "00055M.track\n", \
+                   "00055M_VLM.track\n", "#blend fractions, must sum to 1.0\n", "0.50\n", \
+                   "0.50\n", "#name of blended track\n", "00055M.track.eep"]
 
+        os.chdir(os.environ['ISO_DIR'])
 
-    #Write out the contents of the file
-    content = ["#data directory\n", eeps_dir+"\n", "#number of tracks to blend\n", "2\n", \
-               "#names of those tracks; if .eep doesn't exist, then will create them\n", "00055M.track\n", \
-               "00055M_VLM.track\n", "#blend fractions, must sum to 1.0\n", "0.50\n", \
-               "0.50\n", "#name of blended track\n", "00055M.track.eep"]
+        with open("input.blend1", "w") as newinputfile:
+            for contentline in content:
+                newinputfile.write(contentline)
 
-    os.chdir(os.environ['ISO_DIR'])
+        result = os.system("./blend_eeps input.blend1")
+        if result==0: os.remove(eeps_dir+'/00055M_VLM.track.eep')
 
-    with open("input.blend1", "w") as newinputfile:
-        for contentline in content:
-            newinputfile.write(contentline)
+    if os.path.isfile(eeps_dir+'/00060M_VLM.track.eep'):
+        #Write out the contents of the file
+        content = ["#data directory\n", eeps_dir+"\n", "#number of tracks to blend\n", "2\n", \
+                   "#names of those tracks; if .eep doesn't exist, then will create them\n", "00060M.track\n", \
+                   "00060M_VLM.track\n", "#blend fractions, must sum to 1.0\n", "0.75\n", \
+                   "0.25\n", "#name of blended track\n", "00060M.track.eep"]
 
-    os.system("./blend_eeps input.blend1")
+        os.chdir(os.environ['ISO_DIR'])
 
-    #Write out the contents of the file
-    content = ["#data directory\n", eeps_dir+"\n", "#number of tracks to blend\n", "2\n", \
-               "#names of those tracks; if .eep doesn't exist, then will create them\n", "00060M.track\n", \
-               "00060M_VLM.track\n", "#blend fractions, must sum to 1.0\n", "0.75\n", \
-               "0.25\n", "#name of blended track\n", "00060M.track.eep"]
+        with open("input.blend1", "w") as newinputfile:
+            for contentline in content:
+                newinputfile.write(contentline)
 
-    os.chdir(os.environ['ISO_DIR'])
+        result = os.system("./blend_eeps input.blend1")
+        if result==0: os.remove(eeps_dir+'/00060M_VLM.track.eep')
 
-    with open("input.blend1", "w") as newinputfile:
-        for contentline in content:
-            newinputfile.write(contentline)
-
-    os.system("./blend_eeps input.blend1")
-
-    #remove unneeded EEP files
-    os.chdir(eeps_dir)
-    os.remove('00050M_VLM.track.eep')
-    os.remove('00055M_VLM.track.eep')
-    os.remove('00060M_VLM.track.eep')
 
     #and rename the other VLM files for isochrone processing
+    os.chdir(eeps_dir)
     files=['00010M_VLM.track.eep', '00015M_VLM.track.eep', '00020M_VLM.track.eep', '00025M_VLM.track.eep', '00030M_VLM.track.eep', 
            '00035M_VLM.track.eep', '00040M_VLM.track.eep', '00045M_VLM.track.eep']
     for f in files:
@@ -142,31 +141,6 @@ def make_eeps_isos(runname, basic=False, fsps=False):
     #Generate a list of incomplete EEPs
     eeps_directory = os.path.join(home_run_directory, "eeps")
     incomplete_eeps_arr = []
-   # for eepname in glob.glob(eeps_directory + "/*.eep"):
-   #     #Remove the pre-blended EEPs
-   #     if "M_" in eepname:
-   #         os.system("rm -f " + eepname)
-   #         continue        
-   #     #Check the length of each EEP file and identify the ones that are incomplete
-   #     numeeps = int(subprocess.Popen('wc -l '+eepname, stdout=subprocess.PIPE, shell=True).stdout.read().split(' ')[-2])
-   #     mass_val = float(eepname.split('M.track')[0].split('/')[-1])/100.0
-   #     if ((mass_val<=0.7)&(numeeps!=lowmass_num_lines)):
-   #         incomplete_eeps_arr.append(eepname)
-   #     if ((mass_val>0.7)&(mass_val<10.0)&(numeeps!=intmass_num_lines)):
-   #         if ((mass_val>6.0)&(mass_val<10.0)&(numeeps==highmass_num_lines)):
-   #             continue
-   #         else:
-   #             incomplete_eeps_arr.append(eepname)
-   #     if ((mass_val>=10.0)&(numeeps!=highmass_num_lines)):
-   #         incomplete_eeps_arr.append(eepname)
-
-    #Make the input file for the track interpolator consisting of only complete EEP files to interpolate bad EEPs from
-    #   os.chdir(os.environ['MIST_CODE_DIR'])
-    #   min_good_mass, max_good_mass = make_iso_input_file.make_iso_input_file(runname, "interp_eeps", basic, incomplete=incomplete_eeps_arr)
-    #   for incomplete_eeps in incomplete_eeps_arr:
-    #       mass_val = float(incomplete_eeps.split('M.track')[0].split('/')[-1])/100.0
-    #       if (mass_val < min_good_mass) | (mass_val > max_good_mass):
-    #           incomplete_eeps_arr.pop(incomplete_eeps_arr.index(incomplete_eeps))
 
     #Make the input.track file 
     os.chdir(os.environ['ISO_DIR'])    
@@ -179,15 +153,6 @@ def make_eeps_isos(runname, basic=False, fsps=False):
                 eepline = str(mass_val) + ' ' + incomplete_eeps.split('/')[-1] + "_INTERP\n"
                 trackinputfile.write(eepline)
 
-    #Write out a textfile of interpolated EEPs
- #   incomplete_eeps_arr.sort()
- #   with open(eeps_directory+"/interpolated_eeps.txt", "w") as list_interp_eeps:
- #       for incomplete_eeps in incomplete_eeps_arr:
- #           list_interp_eeps.write(incomplete_eeps+"\n")
-
-    #Interpolate the new tracks
- #   os.system("./make_track " + "input.tracks_"+runname_format)
-    
     #Make the FSPS isochrones
     if fsps==True:
         isoch_directory = os.path.join(home_run_directory, "isochrones")

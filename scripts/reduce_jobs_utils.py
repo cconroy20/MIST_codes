@@ -176,8 +176,6 @@ def sort_histfiles(rawdirname,merge_TPAGB=False):
 
     """
 
-    blend_VLM = True
-
     #Get the list of history files (tracks)
     listofhist = glob.glob(os.path.join(os.environ['MIST_GRID_DIR'], os.path.join(rawdirname+'/*/LOGS/*.data')))
 
