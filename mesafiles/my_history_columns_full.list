@@ -25,7 +25,7 @@
       surf_avg_omega ! surf_v_rot/R
       surf_avg_v_rot ! km/sec rotational velocity at equator
       surf_num_c12_div_num_o16 ! ratio of number fractions, >1 for C star
-      v_wind_Km_per_s ! wind velocity
+      !v_wind_Km_per_s ! wind velocity
 
    ! just for massive rotating stars
 
@@ -38,6 +38,13 @@
       surf_r_equatorial_div_r ! equatorial radius
       surf_r_polar_div_r ! polar radius
       total_angular_momentum
+
+   ! gravity darkening
+      grav_dark_L_polar !Lsun 
+      grav_dark_Teff_polar !K
+      grav_dark_L_equatorial !Lsun 
+      grav_dark_Teff_equatorial !K
+
               
    ! mass fractions near surface (averaged over the outer 1e−6% of the total stellar mass)
        
@@ -170,6 +177,7 @@
  
    !asteroseismic properties
       
+      apsidal_constant_k2
       delta_nu ! large frequency separation for p-modes (microHz)
          ! 1e6/(seconds for sound to cross diameter of star)
       delta_Pg ! g-mode period spacing for l=1 (seconds)
@@ -199,3 +207,8 @@
       conv_env_turnover_time_l_b ! mixing length evaluated at the BCZ / 
                                  ! v_conv evaluated at one half mixing length above BCZ
       conv_env_turnover_time_g ! dr/convective speed(r) integrated over the entire CZ
+
+      envelope_binding_energy         
+
+      total_moment_of_inertia 
+
