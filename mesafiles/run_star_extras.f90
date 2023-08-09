@@ -73,7 +73,7 @@ contains
     type (star_info), pointer :: s
     integer :: j, cid
     real(dp) :: frac, vct30, vct100
-    character(len=256) :: tau10_summary
+    character(len=256) :: summary
     ierr = 0
     call star_ptr(id, s, ierr)
     if (ierr /= 0) return
@@ -114,9 +114,13 @@ contains
     s% overshoot_f0_below_nonburn_shell = 0.5d0 * s% overshoot_f_below_nonburn_shell
 
     !set the correct summary file for the BC tables depending on [a/Fe]        
-    tau10_summary = 'table10_summary_' // trim(s% job% extras_cpar(1)) // '.txt'
-    call table_atm_init(tau10_summary, ierr)
-
+    if(trim(s% which_atm_option)=='tau_10_tables')then
+      summary = 'table10_summary_' // trim(s% job% extras_cpar(1)) // '.txt'
+      call table_atm_init(summary, ierr)
+    elseif(trim(s% which_atm_option)=='tau_100_tables')then
+      summary = 'table100_summary_' // trim(s% job% extras_cpar(1)) // '.txt'
+      call table_atm_init(summary,ierr)
+    endif
   end function extras_startup
 
 
