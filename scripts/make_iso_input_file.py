@@ -77,7 +77,7 @@ def make_iso_input_file(runname, mode, basic, incomplete=[]):
     fehval = float(feh[1:2]+'.'+feh[2:4])
     if 'm' in feh:
         fehval *= -1.0
-    afeval = float(afe[1:2]+'.'+afe[2:3])
+    afeval = float(afe[1:2])/10.0
     if 'm' in afe:
         afeval *= -1.0
 
