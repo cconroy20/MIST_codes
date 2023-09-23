@@ -114,6 +114,20 @@ def make_eeps_isos(runname, basic=False, fsps=False):
     os.chdir(os.environ['ISO_DIR'])
     os.system("./make_iso " + inputfile)
 
+
+    #Run "Charlie's Angel":
+    eep_file=os.path.join(os.path.join(os.path.join(os.environ['MIST_GRID_DIR'], runname), "eeps"), "00010M.track")
+    iso_dir=os.path.join(os.path.join(os.environ['MIST_GRID_DIR'], runname), "isochrones")
+    if basic:
+        iso_root=runname_format+"_basic.iso"
+    else:
+        iso_root=runname_format+"_full.iso"
+
+    iso_file = os.path.join(iso_dir, iso_root)
+    
+    os.system("./charlies_angel "+eep_file+" "+iso_file+" "+iso_file)
+
+    
     #Get the path to the home directory for the run (runname)
     with open(inputfile) as f:
         lines=f.readlines()
