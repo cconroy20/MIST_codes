@@ -48,7 +48,6 @@ def trim_file(histfile):
                 deriv_logTeff = (zz[1:]-zz[:-1]+1.0e-8)/(xx[1:]-xx[:-1]+1.0e-8)
                 badpagb = np.where((abs(deriv_logL) > 0.1)|(abs(deriv_logTeff) > 0.01))[0]
                 if len(badpagb > 0):
-                    print 'Cutting out bad PAGB scribbles...'                    
                     arrdata = (np.delete(np.array(arrdata), np.array(badpagb)+pagbind[0], 0))
                     data = list(np.delete(np.array(data), np.array(badpagb)+pagbind[0], 0))
             
