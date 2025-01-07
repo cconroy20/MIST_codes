@@ -72,7 +72,7 @@ contains
     integer, intent(out) :: ierr
     type (star_info), pointer :: s
     integer :: j, cid
-    real(dp) :: frac, vct30, vct100
+    real(dp) :: frac, vct30, vct100, scale_factor
     character(len=256) :: summary
     ierr = 0
     call star_ptr(id, s, ierr)
@@ -90,17 +90,30 @@ contains
        TP_AGB_check=.true.
     endif
 
-    if(s% initial_mass <= 4.0d0) then 
+    if(s% initial_mass < 7.0d0) then
     !FULLER et al. TAYLER-SPRUIT
-       s% am_nu_ST_factor = 0.0d0
+       if(s% initial_mass > 4.0d0) then
+          ! scale to zero from 4 to 7 Msun
+          scale_factor = pow2((7d0 - s% initial_mass)/(7d0 - 4d0))
+       else
+          ! Full on for <= 4.0 Msun
+          scale_factor = 1d0
+       end if
+       
+       s% am_nu_ST_factor = 0.0d0 ! inlist also sets D_ST_factor to 0
        s% use_other_am_mixing = .true.
        s% am_time_average = .true.
        s% premix_omega = .true.
        s% recalc_mixing_info_each_substep = .true.
-       s% am_nu_factor = 1.0d0
-       s% am_nu_non_rotation_factor = 1.0d0
-       s% am_nu_visc_factor = 0.333d0
+       s% am_nu_factor = 1.0d0 ! both for Fuller and default
+       s% am_nu_non_rotation_factor = 1.0d0 ! both for Fuller and default
        s% angsml = 0.0d0
+
+       ! Scale from 0.333 for Fuller, to 1 for default
+       s% am_nu_visc_factor = 0.333d0 + (1d0 - scale_factor)*(1d0 - 0.333d0)
+
+       print *, "Applying Fuller et al Tayler-Spruit with scale factor", scale_factor
+       print *, "am_nu_visc_factor", s% am_nu_visc_factor
     !FULLER et al. TAYLER-SPRUIT
     endif
 
@@ -717,11 +730,19 @@ contains
     type (star_info), pointer :: s
     integer :: k,j,op_err,nsmooth,nsmootham
     real(dp) :: alpha,shearsmooth,nu_tsf,nu_tsf_t,omegac,omegag,omegaa,&
-    omegat,difft,diffm,brunts,bruntsn2,logamnuomega,alphaq
+    omegat,difft,diffm,brunts,bruntsn2,logamnuomega,alphaq,scale_factor
 
     call star_ptr(id,s,ierr)
     if (ierr /= 0) return
 
+    if(s% initial_mass > 4.0d0) then
+       ! scale to zero from 4 to 7 Msun
+       scale_factor = pow2((7d0 - s% initial_mass)/(7d0 - 4d0))
+    else
+       ! Full on for <= 4.0 Msun
+       scale_factor = 1d0
+    end if
+    
     alpha=1d0
     nsmooth=5
     nsmootham=nsmooth-3
@@ -762,7 +783,7 @@ contains
             if (pow2(brunts) < 2d0*pow2(shearsmooth)*pow2(s% omega(k))) then
                 nu_tsf_t = alpha*abs(shearsmooth)*s% omega(k)*pow2(s% r(k))
             end if
-            s% am_nu_omega(k) = s% am_nu_omega(k) + max(nu_tsf,nu_tsf_t) + 1d-1
+            s% am_nu_omega(k) = s% am_nu_omega(k) + scale_factor*(max(nu_tsf,nu_tsf_t) + 1d-1)
         end if
 
      end do
@@ -797,7 +818,7 @@ contains
             if (pow2(brunts) < 2d0*pow2(shearsmooth)*pow2(s% omega(k))) then
                 nu_tsf_t = alpha*abs(shearsmooth)*s% omega(k)*pow2(s% r(k))
             end if
-            s% am_nu_omega(k) = s% am_nu_omega(k) + max(nu_tsf,nu_tsf_t) + 1d-1
+            s% am_nu_omega(k) = s% am_nu_omega(k) + scale_factor*(max(nu_tsf,nu_tsf_t) + 1d-1)
         end if
       end do
 
@@ -830,7 +851,7 @@ contains
         if (pow2(brunts) < 2d0*pow2(shearsmooth)*pow2(s% omega(k))) then
             nu_tsf_t = alpha*abs(shearsmooth)*s% omega(k)*pow2(s% r(k))
         end if
-        s% am_nu_omega(k) = s% am_nu_omega(k) + max(nu_tsf,nu_tsf_t) + 1d-1
+        s% am_nu_omega(k) = s% am_nu_omega(k) + scale_factor*(max(nu_tsf,nu_tsf_t) + 1d-1)
     end if
   end do
 

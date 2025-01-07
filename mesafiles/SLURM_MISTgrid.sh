@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name="<<RUNNAME>>"
-#SBATCH --partition=conroy,itc_cluster,shared
+#SBATCH --partition=conroy,itc_cluster,shared,sapphire
 #SBATCH --constraint="intel"
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=12
